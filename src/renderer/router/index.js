@@ -18,7 +18,6 @@ const router = new Router({
     // 概览部分
     {
       path: '/',
-      name: 'Layer',
       component: () => import('../components/Layer'),
       meta: {
         requiresLogin: true
