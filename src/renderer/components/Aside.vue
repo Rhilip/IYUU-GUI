@@ -1,5 +1,5 @@
 <template>
-    <el-aside :width="isCollapse ? '65px' : '250px'">
+    <el-aside :width="isCollapse ? '65px' : '220px'">
         <el-menu class="el-menu-vertical-aside" router
                  :default-active="$route.name" :collapse="isCollapse">
             <el-menu-item-group>
@@ -93,7 +93,7 @@ export default {
     }
 
     .el-menu-vertical-aside:not(.el-menu--collapse) {
-        width: 250px;
+        width: 220px;
         min-height: 680px;
     }
 </style>

@@ -60,6 +60,7 @@ export default {
   data () {
     return {
       need_co_site: false, // 是否需要展示合作站点认证
+      should_read_disclaimer: true, // 是否需要在表单提交的时候，展示免责声明
       co_site: ['ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'],
       form: {
         token: ''
@@ -83,13 +84,38 @@ export default {
       require('electron').shell.openExternal(href)
     },
 
+    _submit () {
+      if (this.need_co_site) {
+        this.registerToken()
+      } else {
+        this.checkToken()
+      }
+    },
+
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.need_co_site) {
-            this.registerToken()
+          if (this.should_read_disclaimer) {
+            this.$confirm(
+              '在使用本工具前，请同样认真阅读IYUUAutoReseed的《免责声明》。全文如下：<br>' +
+              '<br>' +
+              '使用IYUUAutoReseed自动辅种工具本身是非常安全的，IYUU脚本辅种时不会跟PT站点的服务器产生任何交互，只是会把下载种子链接推送给下载器，由下载器去站点下载种子。理论上，任何站点、任何技术都无法检测你是否使用了IYUUAutoReseed。危险来自于包括但不限于以下几点：<br>' +
+              '第一：建议不要自己手动跳校验，任何因为跳校验ban号，别怪我没提醒，出事后请不要怪到IYUU的头上；<br>' +
+              '第二：官方首发资源、其他一切首发资源的种子，IYUUAutoReseed自动辅种工具也无法在出种前辅种，如果因为你个人的作弊而被ban号，跟IYUU无关；<br>' +
+              '第三：您使用IYUU工具造成的一切损失，与IYUU无关。如不接受此条款，请不要使用IYUUAutoReseed，并立刻删除已经下载的源码。',
+              {
+                title: '免责声明',
+                customClass: 'message-disclaimer',
+                dangerouslyUseHTMLString: true
+              }
+            )
+              .then(_ => {
+                this.should_read_disclaimer = false
+                this._submit()
+              })
+              .catch(_ => {})
           } else {
-            this.checkToken()
+            this._submit()
           }
         } else {
           this.$notify.error({
@@ -188,5 +214,11 @@ export default {
 
     .el-header {
         margin-top: 20px;
+    }
+</style>
+
+<style>
+    .message-disclaimer {
+        width: 620px !important;
     }
 </style>
