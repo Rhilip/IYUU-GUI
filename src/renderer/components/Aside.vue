@@ -49,7 +49,7 @@
                     <span slot="title">捐赠支持</span>
                 </el-menu-item>
             </el-menu-item-group>
-            <el-menu-item index="Collapse" style="margin-top: 80px" :route="{}" @click="toggleCollapse">
+            <el-menu-item index="Collapse" style="margin-top: 60px" :route="{}" @click="toggleCollapse">
                 <i :class="isCollapse ? 'el-icon-caret-right' : 'el-icon-caret-left'" />
                 <span slot="title">{{ isCollapse ? '展开侧边栏' : '收起侧边栏' }}</span>
             </el-menu-item>

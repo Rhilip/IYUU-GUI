@@ -12,29 +12,29 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: require('../components/TokenLogin').default
+      component: () => import('../components/TokenLogin')
     },
 
     // 概览部分
     {
       path: '/',
       name: 'Layer',
-      component: require('../components/Layer').default,
+      component: () => import('../components/Layer'),
       meta: {
         requiresLogin: true
       },
       children: [
         // 概览部分
         {
-          path: 'status',
+          path: '',
           name: 'Status',
-          component: require('../components/Status').default,
+          component: () => import('../components/Status'),
           meta: {content: '概览'}
         },
         {
           path: 'mission',
           name: 'Mission',
-          component: require('../components/Mission').default,
+          component: () => import('../components/Mission'),
           meta: {content: '启动任务'}
         },
 
@@ -42,25 +42,25 @@ const router = new Router({
         {
           path: 'setting/site',
           name: 'Setting/Site',
-          component: require('../components/Setting/Site').default,
+          component: () => import('../components/Setting/Site'),
           meta: {content: '辅种站点设置'}
         },
         {
           path: 'setting/btclient',
           name: 'Setting/BtClient',
-          component: require('../components/Setting/BtClient').default,
+          component: () => import('../components/Setting/BtClient'),
           meta: {content: '下载器设置'}
         },
         {
           path: 'setting/other',
           name: 'Setting/Other',
-          component: require('../components/Setting/Other').default,
+          component: () => import('../components/Setting/Other'),
           meta: {content: '其他设置'}
         },
         {
           path: 'setting/backup',
           name: 'Setting/Backup',
-          component: require('../components/Setting/Backup').default,
+          component: () => import('../components/Setting/Backup'),
           meta: {content: '参数备份与恢复'}
         },
 
@@ -68,13 +68,13 @@ const router = new Router({
         {
           path: 'gratitude/declare',
           name: 'Declare',
-          component: require('../components/Gratitude/Declare').default,
+          component: () => import('../components/Gratitude/Declare'),
           meta: {content: '项目说明'}
         },
         {
           path: 'gratitude/donate',
           name: 'Donate',
-          component: require('../components/Gratitude/Donate').default,
+          component: () => import('../components/Gratitude/Donate'),
           meta: {content: '捐赠支持'}
         }
       ]
@@ -83,7 +83,7 @@ const router = new Router({
     // Miss路由时
     {
       path: '*',
-      redirect: '/status'
+      redirect: '/'
     }
   ]
 })
