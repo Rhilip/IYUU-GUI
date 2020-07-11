@@ -1,0 +1,192 @@
+<template>
+    <el-container>
+        <el-header height="260">
+            <img src="~@/assets/iyuu.png">
+        </el-header>
+        <el-main>
+            <el-row class="row-bg" justify="space-around" type="flex">
+                <el-col :span="20">
+                    <el-form ref="form"
+                             :rules="form_rules"
+                             :model="form">
+                        <el-form-item label="爱语飞飞 Token" prop="token">
+                            <el-input v-model="form.token" clearable focus maxlength="60"
+                                      minlength="46" show-word-limit />
+                        </el-form-item>
+                        <el-form-item v-if="need_co_site" label="合作站点" prop="site">
+                            <el-select v-model="form.site" placeholder="请选择">
+                                <el-option v-for="item in co_site"
+                                           :key="item"
+                                           :label="item"
+                                           :value="item" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item v-if="need_co_site" label="合作站点 用户id" prop="id">
+                            <el-input v-model="form.id" />
+                        </el-form-item>
+                        <el-form-item v-if="need_co_site" label="合作站点 用户Passkey" prop="passkey">
+                            <el-input v-model="raw_passkey" />
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm('form')">
+                                进入
+                            </el-button>
+                            <el-button @click="resetForm('form')">
+                                重置
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-col>
+            </el-row>
+        </el-main>
+        <el-footer>
+            <div>
+            <span>
+                <el-link type="info" @click="shellOpen('https://www.iyuu.cn/')">API service By IYUU</el-link>
+            </span>
+            <el-divider direction="vertical" />
+            <span>
+                <el-link type="info" @click="shellOpen('https://blog.rhilip.info/')">GUI designed By Rhilip</el-link>
+            </span>
+            </div>
+        </el-footer>
+    </el-container>
+</template>
+
+<script>
+const crypto = require('crypto')
+export default {
+  name: 'InputToken',
+  data () {
+    return {
+      need_co_site: false, // 是否需要展示合作站点认证
+      co_site: ['ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'],
+      form: {
+        token: ''
+        // site: '',
+        // id: '',
+        // passkey: ''
+      },
+      form_rules: {
+        token: [
+          {required: true, message: '请输入Token', trigger: 'blur'},
+          {type: 'string', min: 46, message: 'Token长度最短46位', trigger: 'blur'}
+          // {type: 'regexp', pattern: /^IYUU{42,}$/, message: 'Token须以IYUU开头', trigger: 'blur'}
+        ]
+      },
+      raw_passkey: null
+    }
+  },
+
+  methods: {
+    shellOpen (href) {
+      require('electron').shell.openExternal(href)
+    },
+
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (this.need_co_site) {
+            this.registerToken()
+          } else {
+            this.checkToken()
+          }
+        } else {
+          this.$notify.error({
+            'title': '请先满足表单验证条件'
+          })
+        }
+      })
+    },
+
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+
+      // 重置表单到不需要合作站点状态，并删除合作站点参数（如果有的话），防止表单提交错误
+      this.need_co_site = false
+      const keys = ['site', 'id', 'passkey']
+      for (let j = 0; j < keys.length; j++) {
+        delete this['form'][keys[j]]
+      }
+    },
+
+    redirectAfterLogin () {
+      this.$router.push('Main')
+    },
+
+    showBindCoSite () {
+      this.need_co_site = true
+    },
+
+    checkToken () {
+      // 因为目前IYUU没有直接判定Token是否被绑定过的接口，
+      // 所以首先请求 /api/sites 接口，如果返回信息存在 “用户未绑定合作站点账号”
+      // 则扩展进行绑定
+      this.$iyuu.get('/api/sites', {
+        params: {
+          sign: this.form.token
+        }
+      }).then(resp => {
+        const data = resp.data
+        if (data.msg.search('用户未绑定合作站点账号') > -1) {
+          this.showBindCoSite()
+        } else if (data.data.sites) {
+          this.$notify.success({
+            title: '登录验证成功',
+            message: '后续可直接使用该token进行登录，不需要再次验证合作站点权限'
+          })
+          this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
+            this.redirectAfterLogin()
+          })
+        }
+      })
+    },
+
+    registerToken () {
+      // 要求合作站点用户密钥进行sha1操作 sha1(passkey)
+      if (this.raw_passkey) {
+        this.form.passkey = crypto.createHash('sha1').update(this.raw_passkey).digest('hex')
+      }
+
+      this.$iyuu.get('/user/login', {
+        params: this.form
+      }).then(resp => {
+        const data = resp.data
+        if (data.ret === 200) {
+          // 成功
+          // {"ret":200,"data":{"success":true,"user_id":xxx,"errmsg":"IYUU自动辅种工具：站点ourbits,用户ID:xxxx 登录成功！"},"msg":"","version":"1.7.0"}
+          this.$notify.success({
+            title: '登录验证成功',
+            message: data.data.errmsg
+          })
+          this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
+            // 由于此处有合作站点信息，可以直接添加到sites里面
+            this.$store.dispatch('IYUU/updateSites', this.form.site, {
+              id: this.form.id,
+              passkey: this.form.passkey
+            }).then(() => {
+              this.redirectAfterLogin()
+            })
+          })
+        } else {
+          // 对异常进行处理
+          // {"ret":400,"data":{},"msg":"非法请求：缺少必要参数site","version":"1.7.0"}
+          if (data.msg.search(/缺少必要参数|合作站点.+校验失败/)) {
+            this.showBindCoSite()
+          }
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+    .el-header, .el-footer {
+        text-align: center;
+    }
+
+    .el-header {
+        margin-top: 20px;
+    }
+</style>
