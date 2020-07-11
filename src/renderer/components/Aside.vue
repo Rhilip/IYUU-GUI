@@ -1,5 +1,5 @@
 <template>
-    <el-aside width="auto">
+    <el-aside :width="isCollapse ? '65px' : '250px'">
         <el-menu class="el-menu-vertical-aside" router
                  :default-active="$route.name" :collapse="isCollapse">
             <el-menu-item-group>
@@ -49,7 +49,7 @@
                     <span slot="title">捐赠支持</span>
                 </el-menu-item>
             </el-menu-item-group>
-            <el-menu-item index="Collapse" style="margin-top: 40px" :route="{}" @click="toggleCollapse">
+            <el-menu-item index="Collapse" style="margin-top: 80px" :route="{}" @click="toggleCollapse">
                 <i :class="isCollapse ? 'el-icon-caret-right' : 'el-icon-caret-left'" />
                 <span slot="title">{{ isCollapse ? '展开侧边栏' : '收起侧边栏' }}</span>
             </el-menu-item>
@@ -75,7 +75,7 @@ export default {
     },
 
     logout () {
-      this.$confirm('登出会导致站点设置和下载器设置丢失，如果你未备份设置，请考虑进行导出操作。', '确认登出此Token？')
+      this.$confirm('登出会导致站点设置和下载器设置丢失，如果你未备份设置，请考虑先进行参数导出操作。', '确认登出此Token？')
         .then(_ => {
           this.$store.dispatch('IYUU/clearToken').then(() => {
             this.$router.push('Login')
@@ -88,8 +88,12 @@ export default {
 </script>
 
 <style scoped>
+    .el-menu-vertical-aside {
+        position: fixed;
+    }
+
     .el-menu-vertical-aside:not(.el-menu--collapse) {
-        width: 230px;
+        width: 250px;
         min-height: 680px;
     }
 </style>

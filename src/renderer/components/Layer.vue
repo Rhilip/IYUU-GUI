@@ -24,3 +24,9 @@ export default {
 <style scoped>
 
 </style>
+
+<style>
+    .main-card {
+        margin-bottom: 10px;
+    }
+</style>

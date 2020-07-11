@@ -60,7 +60,7 @@ const router = new Router({
         {
           path: 'setting/backup',
           name: 'Setting/Backup',
-          component: require('../components/Gratitude/Declare').default,
+          component: require('../components/Setting/Backup').default,
           meta: {content: '参数备份与恢复'}
         },
 

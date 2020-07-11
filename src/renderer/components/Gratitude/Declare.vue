@@ -1,16 +1,20 @@
 <template>
     <div>
-        <el-card class="box-card">
+        <el-card class="main-card">
             <div slot="header" class="clearfix">
                 <b>项目参考和引用</b>
+                <el-link style="float: right; padding: 3px 0" @click="shellOpen(dependencies)">
+                    查看所有构建依赖 <i class="el-icon-link" />
+                </el-link>
             </div>
             <div>
-                    <span id="refs_note">
-                        首先感谢 IYUU 开发的辅种软件，并提供相应 API 使得二次开发更为方便，以及在可视化开发过程中也给予本人很多帮助。
-                        此外，IYUU GUI 的诞生是建立在这些项目基础之上，也在此感谢所有项目的参与人员，感谢他们的付出！
-                    </span>
+                <span id="refs_note">
+                    首先感谢 @ledccn 开发的辅种软件 IYUUAutoReseed ，并提供相应 API 使得二次开发更为方便。 <br>
+                    在可视化开发过程中， @ledccn 也给予本人（@Rhilip）很多帮助。<br>
+                    此外，IYUU GUI 的诞生也是建立在这些项目基础之上，在此感谢所有项目的参与人员，感谢他们的付出！
+                </span>
                 <div id="refs_table">
-                    <el-table :data="refsData" stripe max-height="250">
+                    <el-table :data="refsData" stripe max-height="500">
                         <el-table-column
                                 label="项目名"
                                 width="180">
@@ -35,9 +39,12 @@
                 </div>
             </div>
         </el-card>
-        <el-card class="box-card">
+        <el-card class="main-card">
             <div slot="header" class="clearfix">
                 <b>特别鸣谢</b>
+                <el-link style="float: right; padding: 3px 0" @click="shellOpen(contributors)">
+                    查看所有协作者 <i class="el-icon-link" />
+                </el-link>
             </div>
             <div>
                     <span id="thanks_note">
@@ -45,7 +52,7 @@
                         列表中未能一一列出所有给予帮助的同学，也对他们表示感谢，如有遗漏敬请谅解。<br>
                     </span>
                 <div id="thanks_persons" style="margin-top: 10px">
-                    <el-tag v-for="item in thanksData.slice(0,23)"
+                    <el-tag v-for="item in thanksData"
                             :key="item"
                             class="thanks_person"
                             :type="'warning'"
@@ -53,13 +60,6 @@
                         <i class="el-icon-s-custom" />
                         {{ item }}
                     </el-tag>
-                    <template v-if="thanksData.length > 24">
-                        <el-tag class="thanks_person"
-                                :type="'warning'"
-                                effect="plain">
-                            .......
-                        </el-tag>
-                    </template>
                 </div>
             </div>
         </el-card>
@@ -71,6 +71,9 @@ export default {
   name: 'Declare',
   data () {
     return {
+      dependencies: 'https://github.com/Rhilip/IYUU-GUI/network/dependencies',
+      contributors: 'https://github.com/Rhilip/IYUU-GUI/graphs/contributors',
+
       // 项目引用
       refsData: [
         {
@@ -138,11 +141,8 @@ export default {
 </script>
 
 <style scoped>
-.box-card {
-    margin-bottom: 10px;
-}
-.thanks_person{
-    margin-right: 10px;
-    margin-bottom: 5px;
-}
+    .thanks_person{
+        margin-right: 10px;
+        margin-bottom: 5px;
+    }
 </style>
