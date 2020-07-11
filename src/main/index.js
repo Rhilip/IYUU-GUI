@@ -20,7 +20,7 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 588,
+    height: 700,
     useContentSize: true,
     width: 1000,
     // 直接使用这个方式，关闭chrome的CORS保护
