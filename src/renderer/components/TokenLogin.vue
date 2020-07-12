@@ -161,6 +161,7 @@ export default {
             title: '登录验证成功',
             message: '后续可直接使用该token进行登录，不需要再次验证合作站点权限'
           })
+          this.$store.dispatch('IYUU/updateSites', data.data.sites)
           this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
             this.redirectAfterLogin()
           })
@@ -186,13 +187,7 @@ export default {
             message: data.data.errmsg
           })
           this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
-            // 由于此处有合作站点信息，可以直接添加到sites里面
-            this.$store.dispatch('IYUU/updateSites', this.form.site, {
-              id: this.form.id,
-              passkey: this.form.passkey
-            }).then(() => {
-              this.redirectAfterLogin()
-            })
+            this.redirectAfterLogin()
           })
         } else {
           // 对异常进行处理

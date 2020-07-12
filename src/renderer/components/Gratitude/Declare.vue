@@ -181,9 +181,14 @@ export default {
           note: 'Promise based HTTP client for the browser and node.js',
           link: 'https://github.com/axios/axios'
         },
-        // ▼▼▼▼其他项目（直接相关的）请添加到此处▼▼▼▼
+        {
+          name: 'Lodash',
+          version: '4.17.19',
+          note: 'A modern JavaScript utility library delivering modularity, performance & extras.',
+          link: 'https://lodash.com/'
+        },
 
-        // ▲▲▲▲其他项目（直接相关的）请添加到此处▲▲▲▲
+        // ▲▲▲▲其他项目（直接相关的）请添加到此处以上▲▲▲▲
         {
           name: '....',
           version: '....',
