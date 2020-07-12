@@ -23,9 +23,15 @@ function createWindow () {
     height: 700,
     useContentSize: true,
     width: 1000,
-    // 直接使用这个方式，关闭chrome的CORS保护
-    // refs: https://github.com/SimulatedGREG/electron-vue/issues/387
-    webPreferences: {webSecurity: false}
+    webPreferences: {
+      // 直接使用这个方式，关闭chrome的CORS保护
+      // refs: https://github.com/SimulatedGREG/electron-vue/issues/387
+      webSecurity: false,
+
+      // 使得我们能升级 electron 版本
+      // refs: https://github.com/SimulatedGREG/electron-vue/issues/855#issuecomment-503002257
+      nodeIntegration: true
+    }
   })
 
   mainWindow.loadURL(winURL)

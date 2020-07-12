@@ -12,7 +12,7 @@
 import Aside from './Aside'
 export default {
   name: 'Layer',
-  components: {Aside},
+  components: { Aside },
   methods: {
     goBack () {
       this.$router.back()

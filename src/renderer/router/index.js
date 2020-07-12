@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import {Notification} from 'element-ui'
+import { Notification } from 'element-ui'
 
 import store from '../store'
 
@@ -28,13 +28,13 @@ const router = new Router({
           path: '',
           name: 'Status',
           component: () => import('../components/Status'),
-          meta: {content: '概览'}
+          meta: { content: '概览' }
         },
         {
           path: 'mission',
           name: 'Mission',
           component: () => import('../components/Mission'),
-          meta: {content: '启动任务'}
+          meta: { content: '启动任务' }
         },
 
         // 软件设置部分
@@ -42,25 +42,25 @@ const router = new Router({
           path: 'setting/site',
           name: 'Setting/Site',
           component: () => import('../components/Setting/Site'),
-          meta: {content: '辅种站点设置'}
+          meta: { content: '辅种站点设置' }
         },
         {
           path: 'setting/btclient',
           name: 'Setting/BtClient',
           component: () => import('../components/Setting/BtClient'),
-          meta: {content: '下载器设置'}
+          meta: { content: '下载器设置' }
         },
         {
           path: 'setting/other',
           name: 'Setting/Other',
           component: () => import('../components/Setting/Other'),
-          meta: {content: '其他设置'}
+          meta: { content: '其他设置' }
         },
         {
           path: 'setting/backup',
           name: 'Setting/Backup',
           component: () => import('../components/Setting/Backup'),
-          meta: {content: '参数备份与恢复'}
+          meta: { content: '参数备份与恢复' }
         },
 
         // 鸣谢部分
@@ -68,13 +68,13 @@ const router = new Router({
           path: 'gratitude/declare',
           name: 'Declare',
           component: () => import('../components/Gratitude/Declare'),
-          meta: {content: '项目说明'}
+          meta: { content: '项目说明' }
         },
         {
           path: 'gratitude/donate',
           name: 'Donate',
           component: () => import('../components/Gratitude/Donate'),
-          meta: {content: '捐赠支持'}
+          meta: { content: '捐赠支持' }
         }
       ]
     },

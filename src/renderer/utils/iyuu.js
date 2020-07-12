@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {Notification} from 'element-ui'
+import { Notification } from 'element-ui'
 
 export default axios.create({
   baseURL: 'http://api.iyuu.cn/',

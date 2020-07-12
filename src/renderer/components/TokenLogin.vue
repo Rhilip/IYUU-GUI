@@ -70,8 +70,8 @@ export default {
       },
       form_rules: {
         token: [
-          {required: true, message: '请输入Token', trigger: 'blur'},
-          {type: 'string', min: 46, message: 'Token长度最短46位', trigger: 'blur'}
+          { required: true, message: '请输入Token', trigger: 'blur' },
+          { type: 'string', min: 46, message: 'Token长度最短46位', trigger: 'blur' }
           // {type: 'regexp', pattern: /^IYUU{42,}$/, message: 'Token须以IYUU开头', trigger: 'blur'}
         ]
       },
@@ -119,7 +119,7 @@ export default {
           }
         } else {
           this.$notify.error({
-            'title': '请先满足表单验证条件'
+            title: '请先满足表单验证条件'
           })
         }
       })
@@ -132,7 +132,7 @@ export default {
       this.need_co_site = false
       const keys = ['site', 'id', 'passkey']
       for (let j = 0; j < keys.length; j++) {
-        delete this['form'][keys[j]]
+        delete this.form[keys[j]]
       }
     },
 

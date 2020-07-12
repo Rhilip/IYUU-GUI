@@ -24,7 +24,7 @@ export default {
 
     unsignedSites: state => {
       return _.filter(state.sites, site => {
-        return _.findIndex(state.enable_sites, {'site': site.site}) === -1
+        return _.findIndex(state.enable_sites, { site: site.site }) === -1
       })
     },
 
@@ -33,9 +33,9 @@ export default {
 
       let linkTpl = ''
       if (siteInfo) {
-        linkTpl += siteInfo['is_https'] === 1 ? 'https://' : 'http://'
-        linkTpl += siteInfo['base_url'] + '/'
-        linkTpl += siteInfo['download_page']
+        linkTpl += siteInfo.is_https === 1 ? 'https://' : 'http://'
+        linkTpl += siteInfo.base_url + '/'
+        linkTpl += siteInfo.download_page
       }
 
       switch (site) {
@@ -89,42 +89,42 @@ export default {
     }
   },
   actions: {
-    setToken ({state, commit}, token) {
+    setToken ({ state, commit }, token) {
       return new Promise((resolve) => {
         commit('setToken', token)
         resolve()
       })
     },
 
-    clearToken ({commit}) {
+    clearToken ({ commit }) {
       return new Promise((resolve) => {
         commit('clearToken')
         resolve()
       })
     },
 
-    updateSites ({commit}, data) {
+    updateSites ({ commit }, data) {
       return new Promise(resolve => {
         commit('updateSites', data)
         resolve()
       })
     },
 
-    addEnableSite ({commit}, data) {
+    addEnableSite ({ commit }, data) {
       return new Promise(resolve => {
         commit('addEnableSite', data)
         resolve()
       })
     },
 
-    editEnableSite ({commit}, data) {
+    editEnableSite ({ commit }, data) {
       return new Promise(resolve => {
         commit('editEnableSite', data)
         resolve()
       })
     },
 
-    removeEnableSite ({commit}, data) {
+    removeEnableSite ({ commit }, data) {
       return new Promise(resolve => {
         commit('removeEnableSite', data)
         resolve()

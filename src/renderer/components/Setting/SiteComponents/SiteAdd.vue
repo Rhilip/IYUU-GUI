@@ -84,7 +84,7 @@ export default {
         cookies: ''
       },
       site_add_form_rules: {
-        site: {required: true, trigger: 'blur'},
+        site: { required: true, trigger: 'blur' },
         link: {
           validator: (rule, value, callback) => {
             if (value !== '') {
@@ -131,7 +131,7 @@ export default {
     },
 
     handleSiteAddSave () {
-      this.$refs['site_add_form'].validate((valid) => {
+      this.$refs.site_add_form.validate((valid) => {
         if (valid) {
           this.$store.dispatch('IYUU/addEnableSite', this.$lodash.merge(
             this.$store.getters['IYUU/siteInfo'](this.site_add_form.site), this.site_add_form

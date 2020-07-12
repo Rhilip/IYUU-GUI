@@ -73,7 +73,7 @@ import SiteAdd from './SiteComponents/SiteAdd'
 import SiteEdit from './SiteComponents/SiteEdit'
 export default {
   name: 'Site',
-  components: {SiteEdit, SiteAdd},
+  components: { SiteEdit, SiteAdd },
   data () {
     return {
       sites: [],
