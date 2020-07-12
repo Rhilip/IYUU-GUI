@@ -53,6 +53,12 @@
                             </el-button>
                         </template>
                     </el-table-column>
+                    <template slot="append" v-if="$store.state.IYUU.enable_sites.length > 0">
+                        <div class="site-status">
+                            目前 IYUU 共支持 {{ $store.state.IYUU.sites.length }} 个站点，
+                            您已经启用了 {{ $store.state.IYUU.enable_sites.length }} 个站点
+                        </div>
+                    </template>
                 </el-table>
             </div>
         </el-card>
@@ -156,5 +162,5 @@ export default {
 </script>
 
 <style scoped>
-
+.site-status{padding: 10px}
 </style>
