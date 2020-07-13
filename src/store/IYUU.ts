@@ -9,7 +9,7 @@ import {EnableSite} from "@/interfaces/IYUU/EnableSite";
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
     // 相当于原来的state
-    public token: string = ''  // 用户Token
+    public token: string|null = null  // 用户Token
     public self_download_sites: string[] = ['hdchina', 'hdcity']  // 特殊站点，需要自建下载逻辑
     public sites: Site[] = [] // 此处缓存可以使用sites列表（来自服务器）
     public enable_sites: EnableSite[] = [] // 此处缓存用户已经添加了的站点信息

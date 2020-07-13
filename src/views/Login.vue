@@ -25,7 +25,7 @@
                             <el-input v-model="form.id" />
                         </el-form-item>
                         <el-form-item v-if="need_co_site" label="合作站点 用户Passkey" prop="passkey">
-                            <el-input v-model="raw_passkey" />
+                            <el-input v-model="form.passkey" />
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="submitForm('form')">
@@ -54,7 +54,6 @@
 </template>
 
 <script>
-  import crypto from 'crypto'
   import IYUU from '../plugins/iyuu'
 
   export default {
@@ -65,10 +64,10 @@
         should_read_disclaimer: true, // 是否需要在表单提交的时候，展示免责声明
         co_site: ['ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'],
         form: {
-          token: ''
-          // site: '',
-          // id: '',
-          // passkey: ''
+          token: '',
+          site: '',
+          id: '',
+          passkey: ''
         },
         form_rules: {
           token: [
@@ -76,8 +75,7 @@
             {type: 'string', min: 46, message: 'Token长度最短46位', trigger: 'blur'}
             // {type: 'regexp', pattern: /^IYUU{42,}$/, message: 'Token须以IYUU开头', trigger: 'blur'}
           ]
-        },
-        raw_passkey: null
+        }
       }
     },
 
@@ -151,57 +149,36 @@
         // 因为目前IYUU没有直接判定Token是否被绑定过的接口，
         // 所以首先请求 /api/sites 接口，如果返回信息存在 “用户未绑定合作站点账号”
         // 则扩展进行绑定
-        IYUU.instance.get('/api/sites', {
-          params: {
-            sign: this.form.token
-          }
-        }).then(resp => {
-          const data = resp.data
+        IYUU.apiSites(this.form).then(({data,resp}) => {
+          console.log(data,resp)
+          this.$notify.success({
+            title: '登录验证成功',
+            message: '后续可直接使用该token进行登录，不需要再次验证合作站点权限'
+          })
+          this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
+            this.redirectAfterLogin()
+          })
+        }).catch(data => {
           if (data.msg.search('用户未绑定合作站点账号') > -1) {
             this.showBindCoSite()
-          } else if (data.data.sites) {
-            this.$notify.success({
-              title: '登录验证成功',
-              message: '后续可直接使用该token进行登录，不需要再次验证合作站点权限'
-            })
-            Promise.all([
-              this.$store.dispatch('IYUU/updateSites', data.data.sites),
-              this.$store.dispatch('IYUU/setToken', this.form.token)
-            ]).then(() =>{
-              this.redirectAfterLogin()
-            })
           }
         })
       },
 
       registerToken() {
-        // 要求合作站点用户密钥进行sha1操作 sha1(passkey)
-        if (this.raw_passkey) {
-          this.form.passkey = crypto.createHash('sha1').update(this.raw_passkey).digest('hex')
-        }
-
-        IYUU.instance.get('/user/login', {
-          params: this.form
-        }).then(resp => {
-          const data = resp.data
-          if (data.ret === 200) {
+        IYUU.userLogin(this.form)
+          .then(() => {
             // 成功
             // {"ret":200,"data":{"success":true,"user_id":xxx,"errmsg":"IYUU自动辅种工具：站点ourbits,用户ID:xxxx 登录成功！"},"msg":"","version":"1.7.0"}
-            this.$notify.success({
-              title: '登录验证成功',
-              message: data.data.errmsg
-            })
-            this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
-              this.redirectAfterLogin()
-            })
-          } else {
+            this.redirectAfterLogin()
+          })
+          .catch(data => {
             // 对异常进行处理
             // {"ret":400,"data":{},"msg":"非法请求：缺少必要参数site","version":"1.7.0"}
             if (data.msg.search(/缺少必要参数|合作站点.+校验失败/)) {
               this.showBindCoSite()
             }
-          }
-        })
+          })
       }
     }
   }

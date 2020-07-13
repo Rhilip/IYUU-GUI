@@ -65,7 +65,7 @@
 
         <SiteAdd :is-visible="dialogSiteAddVisible" @close-site-add-dialog="dialogSiteAddVisible = false" />
         <SiteEdit :is-visible="dialogSiteEditVisible" @close-site-edit-dialog="dialogSiteEditVisible = false"  :info="toEditSite" />
-</div>
+    </div>
 </template>
 
 <script>
@@ -98,20 +98,11 @@ export default {
     getSites () {
       return new Promise(resolve => {
         if (_.isEmpty(this.$store.state.IYUU.sites)) {
-          IYUU.instance.get('/api/sites', {
-            params: {
-              sign: this.$store.state.IYUU.token
-            }
-          }).then(resp => {
-            const data = resp.data
-            if (data.data.sites) {
-              this.$store.dispatch('IYUU/updateSites', data.data.sites).then(() => {
-                resolve(data.data.sites)
-              })
-            } else {
+          IYUU.apiSites()
+            .then(data => resolve(data.data.sites))
+            .catch(() => {
               this.$notify.error('似乎存在什么错误，服务器未返回站点列表，请稍后再试或者重新登录测试')
-            }
-          })
+            })
         } else {
           resolve(this.$store.state.IYUU.sites)
         }
