@@ -1,6 +1,8 @@
 {
   "name": "iyuu",
   "version": "0.1.0",
+  "author": "Rhilip",
+  "description": "Another Reseed Tools (GUI) powered by IYUU api",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -13,6 +15,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "element-ui": "^2.4.5",
     "lodash": "^4.17.15",
@@ -20,10 +23,12 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "vuex-electron": "^1.0.3"
   },
   "devDependencies": {
     "@types/electron-devtools-installer": "^2.2.0",
+    "@types/lodash": "^4.14.157",
     "@types/node": "^12.0.22",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
@@ -35,7 +40,7 @@
     "@vue/cli-service": "~4.4.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "babel-eslint": "^10.1.0",
-    "electron": "^9.0.0",
+    "electron": "^8.4.0",
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
@@ -51,14 +56,29 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/recommended",
       "eslint:recommended",
       "@vue/typescript"
     ],
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },
-    "rules": {}
+    "rules": {
+      "arrow-parens": 0,
+      "generator-star-spacing": 0,
+      "vue/html-indent": "off",
+      "vue/max-attributes-per-line": ["error", {
+        "singleline": 5,
+        "multiline": {
+          "max": 5,
+          "allowFirstLine": true
+        }
+      }],
+      "vue/html-closing-bracket-newline": ["error", {
+        "singleline": "never",
+        "multiline": "never"
+      }]
+    }
   },
   "browserslist": [
     "> 1%",
