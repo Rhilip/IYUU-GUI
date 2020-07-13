@@ -13,7 +13,8 @@
                         站点名称
                         <el-tooltip effect="dark" placement="top-start">
                             <template slot="content">
-                                本处列出IYUU目前所有支持站点，但请注意：部分站点在使用前要求<b>备案</b>或<b>验证</b>。
+                                本处列出IYUU目前所有支持且尚未添加站点。<br>
+                                <b>请特别注意：部分站点在使用前要求备案或验证。</b>
                             </template>
                             <i class="el-icon-info" />
                         </el-tooltip>
@@ -63,7 +64,7 @@
 </template>
 
 <script>
-    import _ from 'lodash'
+import _ from 'lodash'
 export default {
   name: 'SiteAdd',
 

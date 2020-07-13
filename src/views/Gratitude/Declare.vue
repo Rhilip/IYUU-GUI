@@ -2,30 +2,6 @@
     <div>
         <el-card class="main-card">
             <div slot="header" class="clearfix">
-                <b>特别鸣谢</b>
-                <el-link style="float: right; padding: 3px 0" @click="shellOpen(contributors)">
-                    查看所有协作者 <i class="el-icon-link" />
-                </el-link>
-            </div>
-            <div>
-                    <span id="thanks_note">
-                        在项目的开发和测试中，他们给予了很多帮助和支持，在此表示感谢。<br>
-                        列表中未能一一列出所有给予帮助的同学，也对他们表示感谢，如有遗漏敬请谅解。<br>
-                    </span>
-                <div id="thanks_persons" style="margin-top: 10px">
-                    <el-tag v-for="item in thanksData"
-                            :key="item"
-                            class="thanks_person"
-                            :type="'warning'"
-                            effect="plain">
-                        <i class="el-icon-s-custom" />
-                        {{ item }}
-                    </el-tag>
-                </div>
-            </div>
-        </el-card>
-        <el-card class="main-card">
-            <div slot="header" class="clearfix">
                 <b>问题反馈</b>
                 <el-link style="float: right; padding: 3px 0" @click="shellOpen(issue)">
                     查看所有反馈者 <i class="el-icon-link" />
@@ -75,6 +51,33 @@
         </el-card>
         <el-card class="main-card">
             <div slot="header" class="clearfix">
+                <b>特别鸣谢</b>
+                <el-link style="float: right; padding: 3px 0" @click="shellOpen(contributors)">
+                    查看所有协作者 <i class="el-icon-link" />
+                </el-link>
+            </div>
+            <div>
+                <span id="thanks_note">
+                    在项目的开发和测试中，他们给予了很多帮助和支持，在此表示感谢。<br>
+                    列表中未能一一列出所有给予帮助的同学，也对他们表示感谢，如有遗漏敬请谅解。<br>
+                </span>
+                <el-divider />
+                <ShowPersons :persons="thanksData.developers"
+                             person-type-note="原型开发"
+                             tag-type="warning"
+                             icon-class="el-icon-magic-stick" />
+                <ShowPersons :persons="thanksData.operators"
+                             person-type-note="后期维护"
+                             tag-type=""
+                             icon-class="el-icon-brush" />
+                <ShowPersons :persons="thanksData.testers"
+                             person-type-note="各种测试"
+                             tag-type="info"
+                             icon-class="el-icon-mouse" />
+            </div>
+        </el-card>
+        <el-card class="main-card">
+            <div slot="header" class="clearfix">
                 <b>项目参考和引用</b>
                 <el-link style="float: right; padding: 3px 0" @click="shellOpen(dependencies)">
                     查看所有构建依赖 <i class="el-icon-link" />
@@ -117,8 +120,10 @@
 </template>
 
 <script>
+import ShowPersons from "../../components/Gratitude/ShowPersons";
 export default {
   name: 'Declare',
+  components: {ShowPersons},
   data () {
     return {
       dependencies: 'https://github.com/Rhilip/IYUU-GUI/network/dependencies',
@@ -126,9 +131,20 @@ export default {
       contributors: 'https://github.com/Rhilip/IYUU-GUI/graphs/contributors',
 
       // 用户鸣谢
-      thanksData: [
-        'ledccn', 'Rhilip'
-      ],
+      thanksData: {
+        // 原始贡献者
+        developers: [
+          'ledccn', 'Rhilip',
+        ],
+
+        // 后续参与维护
+        operators: [
+        ],
+
+        // 测试阶段成员
+        testers: [
+        ]
+      },
 
       // 项目引用
       refsData: [
@@ -206,10 +222,6 @@ export default {
 </script>
 
 <style scoped>
-    .thanks_person{
-        margin-right: 10px;
-        margin-bottom: 5px;
-    }
     .report_way{
         margin: 5px 0;
     }
