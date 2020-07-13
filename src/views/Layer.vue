@@ -22,7 +22,9 @@ export default {
 </script>
 
 <style scoped>
-
+    .el-page-header {
+        margin-bottom: 15px;
+    }
 </style>
 
 <style>

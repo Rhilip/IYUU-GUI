@@ -151,7 +151,7 @@
         // 因为目前IYUU没有直接判定Token是否被绑定过的接口，
         // 所以首先请求 /api/sites 接口，如果返回信息存在 “用户未绑定合作站点账号”
         // 则扩展进行绑定
-        IYUU.get('/api/sites', {
+        IYUU.instance.get('/api/sites', {
           params: {
             sign: this.form.token
           }
@@ -164,8 +164,10 @@
               title: '登录验证成功',
               message: '后续可直接使用该token进行登录，不需要再次验证合作站点权限'
             })
-            this.$store.dispatch('IYUU/updateSites', data.data.sites)
-            this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
+            Promise.all([
+              this.$store.dispatch('IYUU/updateSites', data.data.sites),
+              this.$store.dispatch('IYUU/setToken', this.form.token)
+            ]).then(() =>{
               this.redirectAfterLogin()
             })
           }
@@ -178,7 +180,7 @@
           this.form.passkey = crypto.createHash('sha1').update(this.raw_passkey).digest('hex')
         }
 
-        IYUU.get('/user/login', {
+        IYUU.instance.get('/user/login', {
           params: this.form
         }).then(resp => {
           const data = resp.data

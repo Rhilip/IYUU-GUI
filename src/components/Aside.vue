@@ -77,7 +77,7 @@ export default {
     logout () {
       this.$confirm('登出会导致站点设置和下载器设置丢失，如果你未备份设置，请考虑先进行参数导出操作。', '确认登出此Token？')
         .then(() => {
-          this.$store.dispatch('IYUU/clearToken').then(() => {
+          this.$store.dispatch('IYUU/cleanToken').then(() => {
             this.$router.push('Login')
           })
         })
@@ -95,11 +95,5 @@ export default {
     .el-menu-vertical-aside:not(.el-menu--collapse) {
         width: 220px;
         min-height: 680px;
-    }
-</style>
-
-<style>
-    .el-page-header {
-        margin-bottom: 15px;
     }
 </style>

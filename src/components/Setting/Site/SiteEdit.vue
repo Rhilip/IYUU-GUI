@@ -25,7 +25,7 @@
     </el-dialog>
 </template>
 <script>
-  import _ from "lodash"
+import _ from "lodash"
 export default {
   name: 'SiteEdit',
   props: {
@@ -59,11 +59,9 @@ export default {
       this.$emit('close-site-edit-dialog')
     },
 
-    handleSiteEditSave () {
-      this.$store.dispatch('IYUU/editEnableSite', this.site_edit_form).then(() => {
-        this.$notify.success(`更新站点 ${this.info.site} 信息成功`)
-        this.handleDialogClose()
-      })
+    handleSiteEditSave() {
+      this.$store.commit('IYUU/editEnableSite', this.site_edit_form)
+      this.handleDialogClose()
     },
 
     handleSiteEditBeforeClose () {}

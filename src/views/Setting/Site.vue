@@ -70,8 +70,8 @@
 
 <script>
 import _ from "lodash"
-import SiteAdd from './SiteComponents/SiteAdd'
-import SiteEdit from './SiteComponents/SiteEdit'
+import SiteAdd from '../../components/Setting/Site/SiteAdd'
+import SiteEdit from '../../components/Setting/Site/SiteEdit'
 import IYUU from '../../plugins/iyuu'
 
 export default {
@@ -98,7 +98,7 @@ export default {
     getSites () {
       return new Promise(resolve => {
         if (_.isEmpty(this.$store.state.IYUU.sites)) {
-          IYUU.get('/api/sites', {
+          IYUU.instance.get('/api/sites', {
             params: {
               sign: this.$store.state.IYUU.token
             }
@@ -147,9 +147,8 @@ export default {
     handleSiteDelete (index, row) {
       this.$confirm(`确定删除站点 ${row.site}？`)
         .then(() => {
-          this.$store.dispatch('IYUU/removeEnableSite', index).then(() => {
-            this.$notify.success('成功删除站点 ' + row.site)
-          })
+          this.$store.commit('IYUU/removeEnableSite', index)
+          this.$notify.success('成功删除站点 ' + row.site)
         })
         .catch(() => {})
     }

@@ -34,7 +34,7 @@
                         <el-tooltip effect="dark" placement="top-start">
                             <template slot="content">
                                 请注意：除部分站点外，本软件通过构造可以直接下载的种子链接发送给下载器。<br>
-                                请在此处直接写好下载链接构造式。<br>
+                                请在此处直接写好下载链接构造式，但请注意：软件不检测链接是否真实可用。<br>
                                 其中 {} 表示种子ID信息，请勿修改，已有模板中的 {passkey} 等信息请替换成自己信息。
                             </template>
                             <i class="el-icon-info" />
@@ -135,12 +135,13 @@ export default {
     handleSiteAddSave () {
       this.$refs.site_add_form.validate((valid) => {
         if (valid) {
-          this.$store.dispatch('IYUU/addEnableSite', _.merge(
-            this.$store.getters['IYUU/siteInfo'](this.site_add_form.site), this.site_add_form
-          )).then(() => {
-            this.cleanFrom()
-            this.handleDialogClose()
-          })
+          this.$store.commit('IYUU/addEnableSite',
+            _.merge(
+              this.$store.getters['IYUU/siteInfo'](this.site_add_form.site), this.site_add_form
+            )
+          )
+          this.cleanFrom()
+          this.handleDialogClose()
         }
       })
     },

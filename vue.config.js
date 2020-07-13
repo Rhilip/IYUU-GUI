@@ -21,5 +21,8 @@ module.exports = {
       // List them all here so that VCP Electron Builder can find them
       nodeModulesPath: ['../../node_modules', './node_modules']
     }
-  }
+  },
+
+  // refs: https://github.com/championswimmer/vuex-module-decorators#using-with-target-es5
+  transpileDependencies: ['vuex-module-decorators']
 }

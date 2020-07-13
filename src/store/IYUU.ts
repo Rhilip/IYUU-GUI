@@ -1,38 +1,45 @@
 // @ts-ignore
 import _ from 'lodash'
+import { Notification } from 'element-ui'
+import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
+
 import {Site} from "@/interfaces/IYUU/Site";
 import {EnableSite} from "@/interfaces/IYUU/EnableSite";
 
-export default {
-    namespaced: true as true,
-    state: {
-        token: '' as string, // 用户Token
-        self_download_sites: ['hdchina', 'hdcity'] as string[], // 特殊站点，需要自建下载逻辑
+@Module({namespaced: true, name: 'IYUU'})
+export default class IYUU extends VuexModule {
+    // 相当于原来的state
+    public token: string = ''  // 用户Token
+    public self_download_sites: string[] = ['hdchina', 'hdcity']  // 特殊站点，需要自建下载逻辑
+    public sites: Site[] = [] // 此处缓存可以使用sites列表（来自服务器）
+    public enable_sites: EnableSite[] = [] // 此处缓存用户已经添加了的站点信息
+    public enable_clients = [] // 此处缓存用户已经添加了的客户端信息
 
-        sites: [] as Site[], // 此处缓存可以使用sites列表（来自服务器）
-        enable_sites: [] as EnableSite[], // 此处缓存用户已经添加了的站点信息
-        enable_clients: [] // 此处缓存用户已经添加了的客户端信息
-    },
+    get signedSites() {
+        return this.enable_sites
+    }
 
-    getters: {
-        siteInfo: (state: any) => (siteName: string) => {
-            return state.sites.find((s: { site: string }) => s.site === siteName)
-        },
+    get unsignedSites() {  // 获取用户未添加站点列表
+        return _.filter(this.sites, (site: Site) => {
+            return _.findIndex(this.enable_sites, {site: site.site}) === -1
+        })
+    }
 
-        enableSiteInfo: (state: any) => (siteName: string) => {
-            return state.enable_sites.find((s: { site: string }) => s.site === siteName)
-        },
+    get siteInfo() { // 通过站点名获取来自服务器的站点信息
+        return (siteName: string) => {
+            return this.sites.find((s: Site) => s.site === siteName)
+        }
+    }
 
-        signedSites: (state: any) => state.enable_sites,
+    get enableSiteInfo() {  // 通过站点名来获取用户添加的站点信息
+        return (siteName: string) => {
+            return this.enable_sites.find((s: EnableSite) => s.site === siteName)
+        }
+    }
 
-        unsignedSites: (state: any) => {
-            return _.filter(state.sites, (site: { site: any }) => {
-                return _.findIndex(state.enable_sites, { site: site.site }) === -1
-            })
-        },
-
-        siteDownloadLinkTpl: (state: any, getters: { siteInfo: (arg0: string) => Site }) => (site: string) => {
-            const siteInfo = getters.siteInfo(site)
+    get siteDownloadLinkTpl() {
+        return (siteName: string) => {
+            const siteInfo = this.siteInfo(siteName) as Site
 
             let linkTpl = ''
             if (siteInfo) {
@@ -41,7 +48,8 @@ export default {
                 linkTpl += siteInfo.download_page
             }
 
-            switch (site) {
+            // FIXME 采用IYUU老版站点链接生成方式
+            switch (siteInfo.site) {
                 case 'ttg':
                     linkTpl += '/{passkey}'
                     break
@@ -60,78 +68,42 @@ export default {
 
             return linkTpl
         }
-    },
+    }
 
-    mutations: {
-        setToken (state: { token: any }, token: any) {
-            state.token = token
-        },
+    @MutationAction({ mutate: ['token']})
+    async setToken(token: string) {
+        return {token: token}
+    }
 
-        // 退出登录（清空Token）时，应该清空所有自定义信息
-        clearToken (state: { token: string; enable_sites: never[]; enable_clients: never[] }) {
-            state.token = ''
-            state.enable_sites = []
-            state.enable_clients = []
-        },
-
-        updateSites (state: { sites: any }, data: any) {
-            state.sites = data
-        },
-
-        addEnableSite (state: { enable_sites: any[] }, data: any) {
-            state.enable_sites.push(data)
-        },
-
-        editEnableSite (state: { enable_sites: any[] }, data: { site: string }) {
-            const siteIndex = state.enable_sites.findIndex((s: { site: string}) => s.site === data.site)
-            state.enable_sites[siteIndex] = data
-        },
-
-        removeEnableSite (state: { enable_sites: any[] }, siteId: number) {
-            state.enable_sites.splice(siteId, 1)
+    @MutationAction({mutate: ['token', 'sites', 'enable_sites', 'enable_clients']})
+    async cleanToken() {
+        return {
+            token: '',
+            sites: [],
+            enable_sites: [], // TODO 单独提出来，不在退出时清空
+            enable_clients: []
         }
-    },
-    actions: {
-        setToken ({ state, commit }: any, token: any) {
-            return new Promise((resolve) => {
-                commit('setToken', token)
-                resolve()
-            })
-        },
+    }
 
-        clearToken ({ commit }: any) {
-            return new Promise((resolve) => {
-                commit('clearToken')
-                resolve()
-            })
-        },
+    @MutationAction({ mutate: ['sites']})
+    async updateSites(sites: Site[]) {
+        return {sites: sites}
+    }
 
-        updateSites ({ commit }: any, data: any) {
-            return new Promise(resolve => {
-                commit('updateSites', data)
-                resolve()
-            })
-        },
+    @Mutation
+    addEnableSite(site: EnableSite) {
+        this.enable_sites.push(site)
+    }
 
-        addEnableSite ({ commit }: any, data: any) {
-            return new Promise(resolve => {
-                commit('addEnableSite', data)
-                resolve()
-            })
-        },
+    @Mutation
+    editEnableSite(site: EnableSite) {
+        const siteIndex = this.enable_sites.findIndex((s: { site: string }) => s.site === site.site)
+        this.enable_sites[siteIndex] = site
+        Notification.success(`更新站点 ${site.site} 信息成功`)
+    }
 
-        editEnableSite ({ commit }: any, data: any) {
-            return new Promise(resolve => {
-                commit('editEnableSite', data)
-                resolve()
-            })
-        },
-
-        removeEnableSite ({ commit }: any, data: any) {
-            return new Promise(resolve => {
-                commit('removeEnableSite', data)
-                resolve()
-            })
-        }
+    @Mutation
+    removeEnableSite(siteId: number) {
+        this.enable_sites.splice(siteId, 1)
     }
 }

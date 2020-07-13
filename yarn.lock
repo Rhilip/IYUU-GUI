@@ -1027,7 +1027,7 @@
 
 "@typescript-eslint/eslint-plugin@^2.33.0":
   version "2.34.0"
-  resolved "https://registry.npm.taobao.org/@typescript-eslint/eslint-plugin/download/@typescript-eslint/eslint-plugin-2.34.0.tgz?cache=0&sync_timestamp=1594365542823&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40typescript-eslint%2Feslint-plugin%2Fdownload%2F%40typescript-eslint%2Feslint-plugin-2.34.0.tgz#6f8ce8a46c7dea4a6f1d171d2bb8fbae6dac2be9"
+  resolved "https://registry.npm.taobao.org/@typescript-eslint/eslint-plugin/download/@typescript-eslint/eslint-plugin-2.34.0.tgz?cache=0&sync_timestamp=1594613989752&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40typescript-eslint%2Feslint-plugin%2Fdownload%2F%40typescript-eslint%2Feslint-plugin-2.34.0.tgz#6f8ce8a46c7dea4a6f1d171d2bb8fbae6dac2be9"
   integrity sha1-b4zopGx96kpvHRcdK7j7rm2sK+k=
   dependencies:
     "@typescript-eslint/experimental-utils" "2.34.0"
@@ -1037,7 +1037,7 @@
 
 "@typescript-eslint/experimental-utils@2.34.0":
   version "2.34.0"
-  resolved "https://registry.npm.taobao.org/@typescript-eslint/experimental-utils/download/@typescript-eslint/experimental-utils-2.34.0.tgz#d3524b644cdb40eebceca67f8cf3e4cc9c8f980f"
+  resolved "https://registry.npm.taobao.org/@typescript-eslint/experimental-utils/download/@typescript-eslint/experimental-utils-2.34.0.tgz?cache=0&sync_timestamp=1594611570459&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40typescript-eslint%2Fexperimental-utils%2Fdownload%2F%40typescript-eslint%2Fexperimental-utils-2.34.0.tgz#d3524b644cdb40eebceca67f8cf3e4cc9c8f980f"
   integrity sha1-01JLZEzbQO687KZ/jPPkzJyPmA8=
   dependencies:
     "@types/json-schema" "^7.0.3"
@@ -1047,7 +1047,7 @@
 
 "@typescript-eslint/parser@^2.33.0":
   version "2.34.0"
-  resolved "https://registry.npm.taobao.org/@typescript-eslint/parser/download/@typescript-eslint/parser-2.34.0.tgz?cache=0&sync_timestamp=1594365541393&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40typescript-eslint%2Fparser%2Fdownload%2F%40typescript-eslint%2Fparser-2.34.0.tgz#50252630ca319685420e9a39ca05fe185a256bc8"
+  resolved "https://registry.npm.taobao.org/@typescript-eslint/parser/download/@typescript-eslint/parser-2.34.0.tgz#50252630ca319685420e9a39ca05fe185a256bc8"
   integrity sha1-UCUmMMoxloVCDpo5ygX+GFola8g=
   dependencies:
     "@types/eslint-visitor-keys" "^1.0.0"
@@ -1057,7 +1057,7 @@
 
 "@typescript-eslint/typescript-estree@2.34.0":
   version "2.34.0"
-  resolved "https://registry.npm.taobao.org/@typescript-eslint/typescript-estree/download/@typescript-eslint/typescript-estree-2.34.0.tgz#14aeb6353b39ef0732cc7f1b8285294937cf37d5"
+  resolved "https://registry.npm.taobao.org/@typescript-eslint/typescript-estree/download/@typescript-eslint/typescript-estree-2.34.0.tgz?cache=0&sync_timestamp=1594611572155&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40typescript-eslint%2Ftypescript-estree%2Fdownload%2F%40typescript-eslint%2Ftypescript-estree-2.34.0.tgz#14aeb6353b39ef0732cc7f1b8285294937cf37d5"
   integrity sha1-FK62NTs57wcyzH8bgoUpSTfPN9U=
   dependencies:
     debug "^4.1.1"
@@ -7667,9 +7667,9 @@ regexpu-core@^4.7.0:
     unicode-match-property-value-ecmascript "^1.2.0"
 
 registry-auth-token@^4.0.0:
-  version "4.1.1"
-  resolved "https://registry.npm.taobao.org/registry-auth-token/download/registry-auth-token-4.1.1.tgz#40a33be1e82539460f94328b0f7f0f84c16d9479"
-  integrity sha1-QKM74eglOUYPlDKLD38PhMFtlHk=
+  version "4.2.0"
+  resolved "https://registry.npm.taobao.org/registry-auth-token/download/registry-auth-token-4.2.0.tgz?cache=0&sync_timestamp=1594638370094&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fregistry-auth-token%2Fdownload%2Fregistry-auth-token-4.2.0.tgz#1d37dffda72bbecd0f581e4715540213a65eb7da"
+  integrity sha1-HTff/acrvs0PWB5HFVQCE6Zet9o=
   dependencies:
     rc "^1.2.8"
 
@@ -8550,13 +8550,13 @@ strip-indent@^2.0.0:
   integrity sha1-XvjbKV0B5u1sv3qrlpmNeCJSe2g=
 
 strip-json-comments@^3.0.1:
-  version "3.1.0"
-  resolved "https://registry.npm.taobao.org/strip-json-comments/download/strip-json-comments-3.1.0.tgz#7638d31422129ecf4457440009fba03f9f9ac180"
-  integrity sha1-djjTFCISns9EV0QACfugP5+awYA=
+  version "3.1.1"
+  resolved "https://registry.npm.taobao.org/strip-json-comments/download/strip-json-comments-3.1.1.tgz?cache=0&sync_timestamp=1594567635822&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fstrip-json-comments%2Fdownload%2Fstrip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
+  integrity sha1-MfEoGzgyYwQ0gxwxDAHMzajL4AY=
 
 strip-json-comments@~2.0.1:
   version "2.0.1"
-  resolved "https://registry.npm.taobao.org/strip-json-comments/download/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
+  resolved "https://registry.npm.taobao.org/strip-json-comments/download/strip-json-comments-2.0.1.tgz?cache=0&sync_timestamp=1594567635822&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fstrip-json-comments%2Fdownload%2Fstrip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
 stylehacks@^4.0.0:
@@ -9007,7 +9007,7 @@ typedarray@^0.0.6:
 
 typescript@~3.9.3:
   version "3.9.6"
-  resolved "https://registry.npm.taobao.org/typescript/download/typescript-3.9.6.tgz?cache=0&sync_timestamp=1594450096867&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftypescript%2Fdownload%2Ftypescript-3.9.6.tgz#8f3e0198a34c3ae17091b35571d3afd31999365a"
+  resolved "https://registry.npm.taobao.org/typescript/download/typescript-3.9.6.tgz?cache=0&sync_timestamp=1594618757668&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftypescript%2Fdownload%2Ftypescript-3.9.6.tgz#8f3e0198a34c3ae17091b35571d3afd31999365a"
   integrity sha1-jz4BmKNMOuFwkbNVcdOv0xmZNlo=
 
 uglify-js@3.4.x:
@@ -9407,6 +9407,11 @@ vuex-electron@^1.0.3:
   dependencies:
     deepmerge "^2.1.1"
     electron-store "^2.0.0"
+
+vuex-module-decorators@^0.17.0:
+  version "0.17.0"
+  resolved "https://registry.npm.taobao.org/vuex-module-decorators/download/vuex-module-decorators-0.17.0.tgz#b170006f55f579f95415d7181fe5854830473d87"
+  integrity sha1-sXAAb1X1eflUFdcYH+WFSDBHPYc=
 
 vuex@^3.4.0:
   version "3.5.1"
