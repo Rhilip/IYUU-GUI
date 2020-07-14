@@ -4,6 +4,8 @@ import { Notification } from 'element-ui'
 import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
 
 import {Site, EnableSite} from "@/interfaces/IYUU/Site";
+import { defaultQbittorrentConfig } from "@/plugins/btclient/qbittorrent";
+import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
 
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
@@ -11,7 +13,7 @@ export default class IYUU extends VuexModule {
     token: string|null = null  // 用户Token
     sites: Site[] = [] // 此处缓存可以使用sites列表（来自服务器）
     enable_sites: EnableSite[] = [] // 此处缓存用户已经添加了的站点信息
-    enable_clients = [] // 此处缓存用户已经添加了的客户端信息
+    enable_clients: TorrentClientConfig[] = [] // 此处缓存用户已经添加了的客户端信息
 
     // 这个方法不用state，因为state会被持久化，而这个后续可能会增加站点
     get coSites() {
@@ -20,7 +22,14 @@ export default class IYUU extends VuexModule {
         ]
     }
 
-    get isForceDownloadSite() {
+    // 理由同上
+    get supportClientType() {
+        return {
+            'qbittorrent': defaultQbittorrentConfig
+        }
+    }
+
+    get isForceDownloadSite():(siteName: string) => boolean {
         return (siteName:string) => {
             return [
                 'hdchina', 'hdcity'
@@ -30,6 +39,10 @@ export default class IYUU extends VuexModule {
 
     get signedSites() {
         return this.enable_sites
+    }
+
+    get signedBtClient() {
+        return this.enable_clients
     }
 
     get unsignedSites() {  // 获取用户未添加站点列表
@@ -110,6 +123,7 @@ export default class IYUU extends VuexModule {
     @Mutation
     addEnableSite(site: EnableSite) {
         this.enable_sites.push(site)
+        Notification.success(`新增站点 ${site.site} 信息成功`)
     }
 
     @Mutation
@@ -124,5 +138,25 @@ export default class IYUU extends VuexModule {
         const siteInfo : EnableSite = this.enable_sites[siteId]
         this.enable_sites.splice(siteId, 1)
         Notification.success('成功删除站点 ' + siteInfo.site)
+    }
+
+    @Mutation
+    addEnableClient(client: TorrentClientConfig){
+        this.enable_clients.push(client)
+        Notification.success(`新增下载服务器 ${client.name}(${client.type}) 信息成功`)
+    }
+
+    @Mutation
+    editEnableClient(client: TorrentClientConfig) {
+        const clientIndex = this.enable_clients.findIndex((c) => c.uuid === client.uuid)
+        this.enable_clients[clientIndex] = client
+        Notification.success(`更新下载服务器 ${client.name}(${client.type}) 信息成功`)
+    }
+
+    @Mutation
+    removeEnableClient(clientId: number) {
+        const clientInfo: TorrentClientConfig = this.enable_clients[clientId]
+        this.enable_clients.splice(clientId, 1)
+        Notification.success(`成功删除下载服务器 ${clientInfo.name}(${clientInfo.type})`)
     }
 }

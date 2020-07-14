@@ -2,10 +2,10 @@
     <div>
         <el-card class="main-card">
             <div slot="header" class="clearfix">
-                <b>感谢您的关注和支持</b>
+                <b>感谢你的关注和支持</b>
             </div>
             <div>
-                本项目由相关作者在业余时间完成，如果您喜欢本项目，可以通过捐助来支持作者继续开发。
+                本项目由相关作者在业余时间完成，如果你喜欢本项目，可以通过捐助来支持作者继续开发。
             </div>
         </el-card>
         <el-card class="main-card">

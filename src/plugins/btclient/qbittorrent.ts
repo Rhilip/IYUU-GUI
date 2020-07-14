@@ -11,7 +11,7 @@ import {
 import axios, {AxiosResponse, Method} from 'axios'
 import urljoin from 'url-join'
 
-const defaults: QbittorrentTorrentClientConfig = {
+export const defaultQbittorrentConfig: QbittorrentTorrentClientConfig = {
     type: 'qbittorrent',
     name: 'qbittorrent',
     uuid: '0da0e93a-3f5f-4bdd-8f73-aaa006d14771',
@@ -27,7 +27,7 @@ export default class Qbittorrent implements TorrentClient {
     config: QbittorrentTorrentClientConfig;
 
     constructor(options: Partial<QbittorrentTorrentClientConfig> = {}) {
-        this.config = {...defaults, ...options}
+        this.config = {...defaultQbittorrentConfig, ...options}
     }
 
     async ping(): Promise<boolean> {
