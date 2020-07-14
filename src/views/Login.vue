@@ -15,7 +15,7 @@
                         </el-form-item>
                         <el-form-item v-if="need_co_site" label="合作站点" prop="site">
                             <el-select v-model="form.site" placeholder="请选择">
-                                <el-option v-for="item in co_site"
+                                <el-option v-for="item in $store.getters['IYUU/coSites']"
                                            :key="item"
                                            :label="item"
                                            :value="item" />

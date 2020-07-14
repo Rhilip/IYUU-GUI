@@ -1,10 +1,11 @@
 <template>
     <el-dialog
             :before-close="handleSiteAddBeforeClose"
-            :visible.sync="isVisible"
+            :visible.sync="visible"
             class="dialog-add-new-site"
             title="添加新站点"
             width="60%"
+            top="8vh"
             @close="handleDialogClose">
         <div>
             <el-form ref="site_add_form" :model="site_add_form" :rules="site_add_form_rules" label-position="top">
@@ -36,7 +37,7 @@
                         <el-tooltip effect="dark" placement="top-start">
                             <template slot="content">
                                 请注意：除部分站点外，本软件通过构造可以直接下载的种子链接发送给下载器。<br>
-                                请在此处直接写好下载链接构造式，但请注意：软件不检测链接是否真实可用。<br>
+                                请在此处直接写好下载链接构造式，但请特别注意：<b>软件不检测链接是否真实可用。</b><br>
                                 其中 {} 表示种子ID信息，请勿修改，已有模板中的 {passkey} 等信息请替换成自己信息。
                             </template>
                             <i class="el-icon-info" />
@@ -49,7 +50,9 @@
                         站点 Cookies
                         <el-tooltip effect="dark" placement="top-start">
                             <template slot="content">
-                                除部分无法构造种子下载链接的站点外，使用自动辅种功能，可以不配置站点Cookies信息。
+                                除部分无法构造种子下载链接的站点外，只使用自动辅种功能，可以不配置站点Cookies信息。<br>
+                                软件同时支持 <code>{key}={value};格式</code> 以及 <code>EditCookies插件的导出格式。</code><br>
+                                但请特别注意：<b>软件仅验证是否符合格式但同样不检测Cookies是否真实可用。</b>
                             </template>
                             <i class="el-icon-info" />
                         </el-tooltip>
@@ -57,6 +60,11 @@
                     <el-input v-model="site_add_form.cookies" :autosize="{ minRows: 2}" type="textarea" />
                 </el-form-item>
             </el-form>
+            <el-alert type="info" show-icon :closable="false">
+                <template>
+                    关于站点的一些<b>高级设置</b>，请在添加站点后使用“编辑”功能进行控制。
+                </template>
+            </el-alert>
         </div>
         <span slot="footer" class="dialog-footer">
                 <el-button @click="handleDialogClose">取 消</el-button>
@@ -67,6 +75,7 @@
 
 <script>
 import _ from 'lodash'
+import validCookies from "../../../plugins/cookies";
 export default {
   name: 'SiteAdd',
 
@@ -79,6 +88,7 @@ export default {
 
   data () {
     return {
+      visible: false,
       disable_link: false,
       link_placeholder: '',
 
@@ -104,13 +114,28 @@ export default {
             callback()
           },
           trigger: 'blur'
+        },
+        cookies: {
+          validator: (rule, value, callback) => {
+            if (value !== '' && !validCookies(value)) {
+              callback(new Error('你填入的Cookies格式可能存在问题，请再次检查'))
+            }
+          },
+          trigger: 'blur'
         }
       }
     }
   },
 
+  watch: {
+    isVisible: function (newValue) {
+      this.visible = newValue
+    }
+  },
+
   methods: {
     cleanFrom () {
+      this.$refs.site_add_form.clearValidate();
       this.site_add_form = {
         site: null,
         link: '',
@@ -123,7 +148,7 @@ export default {
     },
 
     handleSiteAddSelectChange (site) {
-      if (this.$store.state.IYUU.self_download_sites.includes(site)) {
+      if (this.$store.getters['IYUU/isForceDownloadSite'](site)) {
         this.disable_link = true
         this.link_placeholder = '该站点无法构造种子下载链接，请填写Cookies项'
         this.site_add_form.link = ''
@@ -137,9 +162,19 @@ export default {
     handleSiteAddSave () {
       this.$refs.site_add_form.validate((valid) => {
         if (valid) {
+          let site_extra = {
+            download_torrent: false
+          }
+
+          if (this.$store.getters['IYUU/isForceDownloadSite'](this.site_add_form.site)) {
+            site_extra.download_torrent = true
+          }
+
           this.$store.commit('IYUU/addEnableSite',
             _.merge(
-              this.$store.getters['IYUU/siteInfo'](this.site_add_form.site), this.site_add_form
+              this.$store.getters['IYUU/siteInfo'](this.site_add_form.site), // 来自IYUU的基本信息
+              this.site_add_form,  // 用户添加站点时信息
+              site_extra  // 额外信息
             )
           )
           this.cleanFrom()

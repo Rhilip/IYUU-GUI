@@ -3,17 +3,30 @@ import _ from 'lodash'
 import { Notification } from 'element-ui'
 import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
 
-import {Site} from "@/interfaces/IYUU/Site";
-import {EnableSite} from "@/interfaces/IYUU/EnableSite";
+import {Site, EnableSite} from "@/interfaces/IYUU/Site";
 
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
     // 相当于原来的state
-    public token: string|null = null  // 用户Token
-    public self_download_sites: string[] = ['hdchina', 'hdcity']  // 特殊站点，需要自建下载逻辑
-    public sites: Site[] = [] // 此处缓存可以使用sites列表（来自服务器）
-    public enable_sites: EnableSite[] = [] // 此处缓存用户已经添加了的站点信息
-    public enable_clients = [] // 此处缓存用户已经添加了的客户端信息
+    token: string|null = null  // 用户Token
+    sites: Site[] = [] // 此处缓存可以使用sites列表（来自服务器）
+    enable_sites: EnableSite[] = [] // 此处缓存用户已经添加了的站点信息
+    enable_clients = [] // 此处缓存用户已经添加了的客户端信息
+
+    // 这个方法不用state，因为state会被持久化，而这个后续可能会增加站点
+    get coSites() {
+        return [
+            'ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'
+        ]
+    }
+
+    get isForceDownloadSite() {
+        return (siteName:string) => {
+            return [
+                'hdchina', 'hdcity'
+            ].includes(siteName)
+        }
+    }
 
     get signedSites() {
         return this.enable_sites
