@@ -5,6 +5,7 @@ import store from './store'
 import router from './router'
 
 import './plugins/element.ts'
+import './plugins/uuid.ts'
 
 Vue.config.productionTip = false
 
