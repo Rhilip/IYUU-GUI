@@ -135,6 +135,7 @@
       },
 
       async handleClientAddSave() {
+        this.$notify.info('正在进行下载服务器连接测试，请耐心等待')
         const client = factory(this.client_add_form)
         try {
           const pong = await client.ping()

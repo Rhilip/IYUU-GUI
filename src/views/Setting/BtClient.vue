@@ -72,7 +72,6 @@ export default {
   },
   methods: {
     handleClientAddBtn() {
-      this.$store.commit('IYUU/removeEnableClient',0)
       this.dialogClientAddVisible = true
     },
 
@@ -80,8 +79,11 @@ export default {
 
     },
 
-    handleClientDelete() {
-
+    handleClientDelete(index, row) {
+      this.$confirm(`确定删除下载器 ${row.name}(${row.type})？`)
+        .then(() => {
+          this.$store.commit('IYUU/removeEnableClient', index)
+        })
     }
   }
 }
