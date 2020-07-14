@@ -75,12 +75,11 @@ export default class IYUU extends VuexModule {
         return {token: token}
     }
 
-    @MutationAction({mutate: ['token', 'sites', 'enable_sites', 'enable_clients']})
+    @MutationAction({mutate: ['token', 'sites', 'enable_clients']})
     async cleanToken() {
         return {
             token: '',
             sites: [],
-            enable_sites: [], // TODO 单独提出来，不在退出时清空
             enable_clients: []
         }
     }
@@ -88,6 +87,11 @@ export default class IYUU extends VuexModule {
     @MutationAction({ mutate: ['sites']})
     async updateSites(sites: Site[]) {
         return {sites: sites}
+    }
+
+    @MutationAction({mutate: ['sites']})
+    async cleanSites() {
+        return {sites: []}
     }
 
     @Mutation
@@ -104,6 +108,8 @@ export default class IYUU extends VuexModule {
 
     @Mutation
     removeEnableSite(siteId: number) {
+        const siteInfo : EnableSite = this.enable_sites[siteId]
         this.enable_sites.splice(siteId, 1)
+        Notification.success('成功删除站点 ' + siteInfo.site)
     }
 }

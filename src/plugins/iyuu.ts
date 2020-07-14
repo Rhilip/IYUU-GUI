@@ -58,6 +58,7 @@ class IyuuEndpoint {
     apiSites(userLoginFrom: userLoginForm|null = null) {
         let sign: string;
         if (userLoginFrom === null) {
+            // @ts-ignore
             sign = store.state.IYUU.token
         } else {
             sign = userLoginFrom.token

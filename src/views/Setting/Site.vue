@@ -139,9 +139,7 @@ export default {
       this.$confirm(`确定删除站点 ${row.site}？`)
         .then(() => {
           this.$store.commit('IYUU/removeEnableSite', index)
-          this.$notify.success('成功删除站点 ' + row.site)
         })
-        .catch(() => {})
     }
   }
 }

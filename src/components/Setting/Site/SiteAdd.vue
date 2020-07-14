@@ -19,7 +19,9 @@
                             <i class="el-icon-info" />
                         </el-tooltip>
                     </template>
-                    <el-select v-model="site_add_form.site" filterable placeholder="请选择"
+                    <el-select v-model="site_add_form.site"
+                               filterable default-first-option
+                               placeholder="请选择"
                                @change="handleSiteAddSelectChange">
                         <el-option
                                 v-for="item in $store.getters['IYUU/unsignedSites']"

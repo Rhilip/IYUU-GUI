@@ -149,20 +149,21 @@
         // 因为目前IYUU没有直接判定Token是否被绑定过的接口，
         // 所以首先请求 /api/sites 接口，如果返回信息存在 “用户未绑定合作站点账号”
         // 则扩展进行绑定
-        IYUU.apiSites(this.form).then(({data,resp}) => {
-          console.log(data,resp)
-          this.$notify.success({
-            title: '登录验证成功',
-            message: '后续可直接使用该token进行登录，不需要再次验证合作站点权限'
+        IYUU.apiSites(this.form)
+          .then(() => {
+            this.$notify.success({
+              title: '登录验证成功',
+              message: '后续可直接使用该token进行登录，不需要再次验证合作站点权限'
+            })
+            this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
+              this.redirectAfterLogin()
+            })
           })
-          this.$store.dispatch('IYUU/setToken', this.form.token).then(() => {
-            this.redirectAfterLogin()
+          .catch(data => {
+            if (data.msg.search('用户未绑定合作站点账号') > -1) {
+              this.showBindCoSite()
+            }
           })
-        }).catch(data => {
-          if (data.msg.search('用户未绑定合作站点账号') > -1) {
-            this.showBindCoSite()
-          }
-        })
       },
 
       registerToken() {

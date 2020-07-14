@@ -3,7 +3,7 @@
         <el-card class="main-card">
             <div slot="header" class="clearfix">
                 <b>问题反馈</b>
-                <el-link style="float: right; padding: 3px 0" @click="shellOpen(issue)">
+                <el-link class="extra_link" @click="shellOpen(issue)">
                     查看所有反馈者 <i class="el-icon-link" />
                 </el-link>
             </div>
@@ -52,7 +52,7 @@
         <el-card class="main-card">
             <div slot="header" class="clearfix">
                 <b>特别鸣谢</b>
-                <el-link style="float: right; padding: 3px 0" @click="shellOpen(contributors)">
+                <el-link class="extra_link" @click="shellOpen(contributors)">
                     查看所有协作者 <i class="el-icon-link" />
                 </el-link>
             </div>
@@ -79,7 +79,7 @@
         <el-card class="main-card">
             <div slot="header" class="clearfix">
                 <b>项目参考和引用</b>
-                <el-link style="float: right; padding: 3px 0" @click="shellOpen(dependencies)">
+                <el-link class="extra_link" @click="shellOpen(dependencies)">
                     查看所有构建依赖 <i class="el-icon-link" />
                 </el-link>
             </div>
@@ -222,6 +222,11 @@ export default {
 </script>
 
 <style scoped>
+    .extra_link {
+        float: right; 
+        padding: 3px 0
+    }
+
     .report_way{
         margin: 5px 0;
     }
