@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-            :before-close="handleSiteAddBeforeClose"
+            :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
             class="dialog-add-new-site"
             title="添加新站点"
@@ -120,6 +120,7 @@ export default {
             if (value !== '' && !validCookies(value)) {
               callback(new Error('你填入的Cookies格式可能存在问题，请再次检查'))
             }
+            callback()
           },
           trigger: 'blur'
         }
@@ -183,7 +184,7 @@ export default {
       })
     },
 
-    handleSiteAddBeforeClose (done) {
+    handleDialogBeforeClose (done) {
       this.cleanFrom()
       done()
     }

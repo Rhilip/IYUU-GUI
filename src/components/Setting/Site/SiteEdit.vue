@@ -1,34 +1,55 @@
 <template>
     <el-dialog
+            :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
             class="dialog-add-new-site"
-            :title="`编辑站点 - ${site_edit_form.site}`"
+            :title="`编辑站点 - ${form.site}`"
             width="60%"
             top="8vh"
             @close="handleDialogClose">
         <div>
-            <el-form ref="site_edit_form" :model="site_edit_form" :rules="site_add_form_rules" label-position="top">
+            <el-form ref="site_edit_form" :model="form" :rules="rules" label-position="top">
                 <el-form-item label="下载链接构造模板" prop="link">
-                    <el-input v-model="site_edit_form.link"
+                    <el-input v-model="form.link"
                               :disabled="disable_link"
                               :placeholder="disable_link ? '该站点不支持构造种子下载链接' : ''" />
                 </el-form-item>
                 <el-form-item label="站点 Cookies" prop="cookies">
-                    <el-input v-model="site_edit_form.cookies" :autosize="{ minRows: 2}" type="textarea" />
+                    <el-input v-model="form.cookies" :autosize="{ minRows: 2}" type="textarea" />
                 </el-form-item>
-                <el-form-item label="高级设置" prop="download_torrent">
+                <el-form-item label="高级设置" prop="rate_limit">
                     推送方式：<el-switch
-                            v-model="site_edit_form.download_torrent"
-                            active-text="直接推送链接给下载器让其下载"
-                            inactive-text="先下载链接然后发送给下载器" :disabled="disable_link" />
+                            v-model="form.download_torrent"
+                            active-text="先下载链接然后发送给下载器"
+                            inactive-text="直接推送链接给下载器让其下载" :disabled="disable_link" />
                     <br>
                     下载频率限制（为0时不做限制）：<br>
                     <el-row type="flex" justify="space-around">
-                        <el-col :span="12">
-                            请求数 <el-input-number v-model="site_edit_form.rate_limit.maxRequests" :min="0" size="small" />
+                        <el-col :span="2">
+                            按周期
                         </el-col>
-                        <el-col :span="12">
-                            请求周期（分钟）<el-input-number v-model="site_edit_form.rate_limit.perMinute" :min="0" size="small" />
+                        <el-col :span="11">
+                            请求数（每周期）
+                            <el-input-number v-model="form.rate_limit.maxPerRequests"
+                                             :disabled="form.rate_limit.maxRequests > 0"
+                                             :min="0" size="small" />
+                        </el-col>
+                        <el-col :span="11">
+                            请求周期（分钟）
+                            <el-input-number v-model="form.rate_limit.perMinute"
+                                             :disabled="form.rate_limit.maxRequests > 0"
+                                             :min="0" size="small" />
+                        </el-col>
+                    </el-row>
+                    <el-row type="flex" justify="space-around">
+                        <el-col :span="2">
+                            按总量
+                        </el-col>
+                        <el-col :span="22">
+                            请求数（每次运行）
+                            <el-input-number v-model="form.rate_limit.maxRequests"
+                                             :disabled="form.rate_limit.maxPerRequests > 0 || form.rate_limit.perMinute > 0"
+                                             :min="0" size="small" />
                         </el-col>
                     </el-row>
                 </el-form-item>
@@ -62,27 +83,37 @@ export default {
       visible: false,
 
       disable_link: false,
-      site_edit_form: {
+      form: {
         download_torrent: false,
         rate_limit: {
+          maxPerRequests: 0,
+          perMinute: 0,
           maxRequests: 0,
-          perMinute: 0
         }
       },
-      site_add_form_rules: {
+      rules: {
         cookies: {
           validator: (rule, value, callback) => {
-            if (this.site_edit_form.download_torrent && value === '') {
+            if (this.form.download_torrent && value === '') {
               callback(new Error(`你启用了功能 先下载种子然后发送给下载器，但未填写Cookies`))
             } else if (this.disable_link && value === '') {
               callback(new Error('该站点不支持构造种子下载链接，但你又没有填入Cookies'))
-            } else if (value !== '') {
-              if (!validCookies(value)) {
-                callback(new Error('你填入的Cookies格式可能存在问题，请再次检查'))
-              } else {
-                callback()
-              }
+            } else if (value !== '' && !validCookies(value)) {
+              callback(new Error('你填入的Cookies格式可能存在问题，请再次检查'))
             }
+            callback()
+          },
+          trigger: 'blur'
+        },
+        rate_limit: {
+          validator: (rule, value, callback) => {
+            if (
+              (this.form.rate_limit.maxPerRequests > 0 && this.form.rate_limit.perMinute === 0) ||
+              (this.form.rate_limit.maxPerRequests === 0 && this.form.rate_limit.perMinute > 0)
+            ) {
+              callback(new Error('最多只允许启用一组下载频率限制规则，且相关值均大于0'))
+            }
+            callback()
           },
           trigger: 'blur'
         }
@@ -99,33 +130,42 @@ export default {
     // “使用info出现父子组件props参数修改”或“直接对Vuex的state修改”的情况导致Vue报错
     // 我们使用新的 site_edit_form 来完整替换所有信息
     info: function () {
-      this.site_edit_form = _.merge({
+      this.form = _.merge({
         download_torrent: false,
         rate_limit: {
+          perMinute: 0,
+          maxPerRequests: 0,
           maxRequests: 0,
-          perMinute: 0
         }
       }, this.info);
 
       this.disable_link = this.$store.getters['IYUU/isForceDownloadSite'](this.info.site)
     }
-
   },
 
   methods: {
-    handleDialogClose () {
+    cleanForm() {
       this.$refs.site_edit_form.clearValidate();
+    },
+
+    handleDialogClose () {
       this.$emit('close-site-edit-dialog')
     },
 
     handleSiteEditSave() {
-      this.$refs.site_edit_form.validate((valid) => {
+      this.$refs.site_edit_form.validate(valid => {
         if (valid) {
-          this.$store.commit('IYUU/editEnableSite', this.site_edit_form)
+          this.$store.commit('IYUU/editEnableSite', this.form)
+          this.cleanForm()
           this.handleDialogClose()
         }
       })
     },
+
+    handleDialogBeforeClose(done) {
+      this.cleanForm()
+      done()
+    }
   }
 }
 </script>
