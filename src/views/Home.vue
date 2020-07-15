@@ -2,101 +2,67 @@
     <div>
         <el-row type="flex" justify="space-around" style="margin-bottom: 10px">
             <el-col :span="4">
-                <el-card class="state-card">
-                    <p class="state-card-header">
-                        启动
-                    </p>
-                    <p class="state-card-body">
-                        {{ $store.state.startAppCount }}
-                        <span class="state-card-body-perpand">
-                            次
-                        </span>
-                    </p>
-                </el-card>
+                <StateCard title="启动" :data="$store.state.startAppCount" prepend="次" />
             </el-col>
             <el-col :span="5">
-                <el-card class="state-card">
-                    <p class="state-card-header">
-                        任务运行
-                    </p>
-                    <p class="state-card-body">
-                        {{ $store.state.startMissionCount }}
-                        <span class="state-card-body-perpand">
-                            次
-                        </span>
-                    </p>
-                </el-card>
+                <StateCard title="任务运行" :data="$store.state.startMissionCount" prepend="次" />
             </el-col>
             <el-col :span="4">
-                <el-card class="state-card">
-                    <p class="state-card-header">
-                        站点
-                    </p>
-                    <p class="state-card-body">
-                        {{ $store.getters['IYUU/signedSites'].length }}
-                        <span class="state-card-body-perpand">
-                            / {{ $store.state.IYUU.sites.length }}
-                        </span>
-                    </p>
-                </el-card>
+                <StateCard title="站点" :data="$store.getters['IYUU/signedSites'].length"
+                           :prepend="`/ ${$store.state.IYUU.sites.length}`" />
             </el-col>
             <el-col :span="4">
-                <el-card class="state-card">
-                    <p class="state-card-header">
-                        下载器
-                    </p>
-                    <p class="state-card-body">
-                        {{ $store.getters['IYUU/signedBtClient'].length }}
-                    </p>
-                </el-card>
+                <StateCard title="下载器" :data="$store.getters['IYUU/signedBtClient'].length" />
             </el-col>
             <el-col :span="5">
-                <el-card class="state-card">
-                    <p class="state-card-header">
-                        辅种
-                    </p>
-                    <p class="state-card-body">
-                        {{ $store.state.reseedTorrentCount }}
-                        <span class="state-card-body-perpand">
-                            个
-                        </span>
-                    </p>
-                </el-card>
+                <StateCard title="辅种" :data="$store.state.reseedTorrentCount" prepend="个" />
             </el-col>
         </el-row>
+        <el-card class="main-card">
+            <div slot="header" class="clearfix">
+                <span>公告栏</span>
+            </div>
+            <div>
+                <el-table stripe :data="table">
+                    <el-table-column
+                            prop="date"
+                            label="日期"
+                            width="100"
+                            align="center" />
+                    <el-table-column
+                            prop="content"
+                            label="内容" />
+                    <template slot="append">
+                        以上仅为 IYUU-GUI 的更新公告，如需查询 IYUUAutoreseed 官方更新，请点击
+                        <el-button type="text" @click="shellOpen('https://gitee.com/ledc/IYUUAutoReseed/blob/master/wiki/公告栏.md')">
+                            IYUUAutoReseed / wiki / 公告栏.md
+                        </el-button>
+                    </template>
+                </el-table>
+            </div>
+        </el-card>
     </div>
 </template>
 
 <script>
+import StateCard from "../components/StateCard";
+import {shellOpen} from "../plugins/common";
+
 export default {
   name: 'Status',
-
+  components: {StateCard},
   data() {
     return {
+      shellOpen: shellOpen,
+      table: []  // TODO 从Github上异步加载
     }
   },
   async created() {
+
   }
 }
 </script>
 
 <style scoped>
-    .state-card > .el-card__body {
-        padding: 10px;
-    }
 
-    .state-card-body {
-        font-size: xx-large;
-        text-align: center;
-    }
-
-    .state-card-body-perpand {
-        color: #909399;
-        font-size: small;
-    }
-
-    .state-card-header {
-        color: #909399;
-        margin: 0;
-    }
 </style>

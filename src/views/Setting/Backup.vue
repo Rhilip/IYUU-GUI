@@ -42,11 +42,11 @@ export default {
           key: 'IYUU/cleanSites'
         },
         {
-          label: '所有添加站点',
+          label: '所有已添加站点',
           key: 'IYUU/cleanEnableSites'
         },
         {
-          label: '所有添加下载服务器',
+          label: '所有已添加下载服务器',
           key: 'IYUU/cleanEnableClients'
         },
         {
