@@ -19,14 +19,14 @@
                             支付宝
                         </el-tag>
                         <!--suppress NpmUsedModulesInstalled, HtmlUnknownTarget -->
-                        <el-image class="donate-img" :src="require('@/assets/donate/Rhilip/alipay.jpg')" />
+                        <el-image class="donate-img" src="/assets/donate/Rhilip/alipay.jpg" />
                     </el-col>
                     <el-col :span="12">
                         <el-tag class="demonstration">
                             微信支付
                         </el-tag>
                         <!--suppress NpmUsedModulesInstalled, HtmlUnknownTarget -->
-                        <el-image class="donate-img" :src="require('@/assets/donate/Rhilip/wechat.png')" />
+                        <el-image class="donate-img" src="/assets/donate/Rhilip/wechat.png" />
                     </el-col>
                 </el-row>
             </div>
@@ -42,7 +42,7 @@
                             微信赞赏码
                         </el-tag>
                         <!--suppress NpmUsedModulesInstalled, HtmlUnknownTarget -->
-                        <el-image class="donate-img" :src="require('@/assets/donate/ledccn/wechat.png')" />
+                        <el-image class="donate-img" src="/assets/donate/ledccn/wechat.png" />
                     </el-col>
                 </el-row>
             </div>
