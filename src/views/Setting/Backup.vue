@@ -10,7 +10,7 @@
                 <el-divider />
                 <el-form :inline="true">
                     <el-form-item label="请选择配置项">
-                        <el-select v-model="cache_clean_key" placeholder="请选择">
+                        <el-select v-model="cache_clean_key" placeholder="请选择" multiple collapse-tags>
                             <el-option
                                     v-for="item in cache_clean_keys"
                                     :key="item.key"
@@ -35,7 +35,7 @@ export default {
   name: 'Backup',
   data() {
     return {
-      cache_clean_key: null,
+      cache_clean_key: [],
       cache_clean_keys: [
         {
           label: '站点缓存',
@@ -48,6 +48,18 @@ export default {
         {
           label: '所有添加下载服务器',
           key: 'IYUU/cleanEnableClients'
+        },
+        {
+          label: '软件打开计数',
+          key: 'cleanAppStart'
+        },
+        {
+          label: '任务运行计数',
+          key: 'cleanMissionStart'
+        },
+        {
+          label: '辅种总数计数',
+          key: 'cleanTorrentReseed'
         }
       ]
     }
@@ -55,10 +67,12 @@ export default {
 
   methods: {
     cleanCache() {
-      this.$store.dispatch(this.cache_clean_key).then(() => {
-        const label = this.cache_clean_keys.find(o => o.key === this.cache_clean_key).label
-        this.$notify.success(`清除配置项 ${label} 成功`)
-      })
+      for (let i = 0; i < this.cache_clean_key.length; i++) {
+        this.$store.dispatch(this.cache_clean_key[i]).then(() => {
+          const label = this.cache_clean_keys.find(o => o.key === this.cache_clean_key[i]).label
+          this.$notify.success(`清除配置项 ${label} 成功`)
+        })
+      }
     }
   }
 }

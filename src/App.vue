@@ -6,7 +6,10 @@
 
 <script>
   export default {
-    name: 'Iyuu'
+    name: 'Iyuu',
+    created() {
+      this.$store.commit('appStart')
+    }
   }
 </script>
 

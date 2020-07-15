@@ -50,7 +50,12 @@ class IyuuEndpoint {
             params.append('desp', desp);
         }
 
-        return await axios.post(`https://iyuu.cn/${store.state.IYUU.token}.send`,params)
+        return await axios.post(`https://iyuu.cn/${this.getSign()}.send`,params)
+    }
+
+    getSign():string {
+        // @ts-ignore
+        return store.state.IYUU.token
     }
 
     // 用户登录绑定操作
@@ -82,8 +87,7 @@ class IyuuEndpoint {
     apiSites(userLoginForm: Forms.userLoginRequest | null = null): Promise<Forms.apiSitesResponse> {
         let sign: string;
         if (userLoginForm === null) {
-            // @ts-ignore
-            sign = store.state.IYUU.token
+            sign = this.getSign()
         } else {
             sign = userLoginForm.token
         }
@@ -117,7 +121,7 @@ class IyuuEndpoint {
         }
 
         return  {
-            sign: store.state.IYUU.token,
+            sign: this.getSign(),
             timestamp: timestamp(),
             version: this.version,
             // @ts-ignore
@@ -151,7 +155,7 @@ class IyuuEndpoint {
         error: string
     }): Promise<Forms.apiNotifyResponse>
     {
-        const form: Forms.apiNotifyRequest = { sigh: store.state.IYUU.token, ...info }
+        const form: Forms.apiNotifyRequest = { sigh: this.getSign(), ...info }
         return new Promise<Forms.apiNotifyResponse>(resolve => {
             this.instance.get('/api/notify', {
                 params: form

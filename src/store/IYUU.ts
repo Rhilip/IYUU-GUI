@@ -1,5 +1,6 @@
 // @ts-ignore
 import _ from 'lodash'
+import axios from 'axios'
 import { Notification } from 'element-ui'
 import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
 
@@ -69,27 +70,9 @@ export default class IYUU extends VuexModule {
 
             let linkTpl = ''
             if (siteInfo) {
-                linkTpl += siteInfo.is_https === 1 ? 'https://' : 'http://'
+                linkTpl += siteInfo.is_https > 0 ? 'https://' : 'http://'
                 linkTpl += siteInfo.base_url + '/'
                 linkTpl += siteInfo.download_page
-            }
-
-            // FIXME 采用IYUU老版站点链接生成方式
-            switch (siteInfo.site) {
-                case 'ttg':
-                    linkTpl += '/{passkey}'
-                    break
-                case 'm-team':
-                case 'moecat':
-                case 'hdbd':
-                    linkTpl += '&passkey={passkey}&https=1'
-                    break
-                case 'ptpbd':
-                    linkTpl += ''
-                    break
-                default:
-                    linkTpl += '&passkey={passkey}'
-                    break
             }
 
             return linkTpl

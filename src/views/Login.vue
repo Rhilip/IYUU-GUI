@@ -54,12 +54,14 @@
 </template>
 
 <script>
-  import IYUU from '../plugins/iyuu'
+    import {shellOpen} from "../plugins/common";
+    import IYUU from '../plugins/iyuu'
 
   export default {
     name: 'Login',
     data() {
       return {
+        shellOpen: shellOpen,
         need_co_site: false, // 是否需要展示合作站点认证
         should_read_disclaimer: true, // 是否需要在表单提交的时候，展示免责声明
         co_site: ['ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'],
@@ -80,10 +82,6 @@
     },
 
     methods: {
-      shellOpen(href) {
-        require('electron').shell.openExternal(href)
-      },
-
       _submit() {
         if (this.need_co_site) {
           this.registerToken()

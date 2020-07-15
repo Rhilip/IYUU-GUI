@@ -120,12 +120,14 @@
 </template>
 
 <script>
+    import {shellOpen} from '../../plugins/common'
 import ShowPersons from "../../components/Gratitude/ShowPersons";
 export default {
   name: 'Declare',
   components: {ShowPersons},
   data () {
     return {
+      shellOpen: shellOpen,
       dependencies: 'https://github.com/Rhilip/IYUU-GUI/network/dependencies',
       issue: 'https://github.com/Rhilip/IYUU-GUI/issues',
       contributors: 'https://github.com/Rhilip/IYUU-GUI/graphs/contributors',
@@ -211,11 +213,6 @@ export default {
           // link: '....'
         }
       ]
-    }
-  },
-  methods: {
-    shellOpen (href) {
-      require('electron').shell.openExternal(href)
     }
   }
 }
