@@ -2,7 +2,6 @@
     <el-dialog
             :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
-            :modal-append-to-body="false"
             class="dialog-add-new-site"
             title="添加新下载服务器"
             top="8vh"

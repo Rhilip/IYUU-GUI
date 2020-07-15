@@ -7,24 +7,33 @@
                         :data="$store.getters['IYUU/signedBtClient']"
                         style="width: 100%">
                     <el-table-column
-                            label="下载器名称"
-                            prop="name">
+                            width="40">
                         <template slot-scope="scope">
                             <img :src="`/assets/client/${scope.row.type}.ico`" alt="client-img" class="client-img-list">
-                            {{ scope.row.name }}
                         </template>
                     </el-table-column>
+                    <el-table-column
+                            label="下载器名称"
+                            prop="name"
+                            width="180" />
+                    <el-table-column
+                            label="服务器地址"
+                            prop="address" />
                     <el-table-column
                             label="用户名"
-                            prop="username" />
+                            prop="username"
+                            width="80"
+                            align="center" />
                     <el-table-column
                             label="密码"
-                            prop="password">
-                        <template slot-scope="scope">
-                            {{ '*'.repeat(scope.row.password.length) }}
+                            prop="password"
+                            width="120"
+                            align="center">
+                        <template slot-scope="/* eslint-disable */scope">
+                            {{ '*'.repeat(10) }}
                         </template>
                     </el-table-column>
-                    <el-table-column align="right">
+                    <el-table-column align="right" width="150">
                         <template slot="header">
                             <el-button
                                     size="medium"
