@@ -62,7 +62,7 @@
 </template>
 <script>
 import _ from "lodash"
-import validCookies from "../../../plugins/cookies";
+import Cookies from "../../../plugins/cookies";
 export default {
   name: 'SiteEdit',
   props: {
@@ -97,7 +97,7 @@ export default {
               callback(new Error(`你启用了功能 先下载种子然后发送给下载器，但未填写Cookies`))
             } else if (this.disable_link && value === '') {
               callback(new Error('该站点不支持构造种子下载链接，但你又没有填入Cookies'))
-            } else if (value !== '' && !validCookies(value)) {
+            } else if (value !== '' && !Cookies.validCookies(value)) {
               callback(new Error('你填入的Cookies格式可能存在问题，请再次检查'))
             }
             callback()

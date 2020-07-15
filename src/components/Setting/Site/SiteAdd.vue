@@ -75,7 +75,7 @@
 
 <script>
 import _ from 'lodash'
-import validCookies from "../../../plugins/cookies";
+import Cookies from "../../../plugins/cookies";
 export default {
   name: 'SiteAdd',
 
@@ -117,7 +117,7 @@ export default {
         },
         cookies: {
           validator: (rule, value, callback) => {
-            if (value !== '' && !validCookies(value)) {
+            if (value !== '' && !Cookies.validCookies(value)) {
               callback(new Error('你填入的Cookies格式可能存在问题，请再次检查'))
             }
             callback()

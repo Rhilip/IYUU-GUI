@@ -220,11 +220,11 @@ export default {
 
 <style scoped>
     .extra_link {
-        float: right; 
+        float: right;
         padding: 3px 0
     }
 
-    .report_way{
+    .report_way {
         margin: 5px 0;
     }
 </style>

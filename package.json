@@ -16,6 +16,7 @@
   "main": "background.js",
   "dependencies": {
     "axios": "^0.19.2",
+    "cookie": "^0.4.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.4.5",
     "lodash": "^4.17.15",
@@ -29,6 +30,7 @@
     "vuex-electron": "^1.0.3"
   },
   "devDependencies": {
+    "@types/cookie": "^0.4.0",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/lodash": "^4.14.157",
     "@types/node": "^12.0.22",

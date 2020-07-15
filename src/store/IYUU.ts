@@ -1,6 +1,5 @@
 // @ts-ignore
 import _ from 'lodash'
-import axios from 'axios'
 import { Notification } from 'element-ui'
 import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
 
