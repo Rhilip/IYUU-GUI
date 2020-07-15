@@ -1,16 +1,18 @@
 // @ts-ignore
 import _ from 'lodash'
-import { Notification } from 'element-ui'
+import {Notification} from 'element-ui'
 import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
 
 import {Site, EnableSite} from "@/interfaces/IYUU/Site";
-import { defaultQbittorrentConfig } from "@/plugins/btclient/qbittorrent";
+import {defaultQbittorrentConfig} from "@/plugins/btclient/qbittorrent";
 import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
+
+import {ReseedStore} from '@/store/store-accessor' // circular import; OK though
 
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
     // 相当于原来的state
-    token: string|null = null  // 用户Token
+    token: string | null = null  // 用户Token
     sites: Site[] = [] // 此处缓存可以使用sites列表（来自服务器）
     enable_sites: EnableSite[] = [] // 此处缓存用户已经添加了的站点信息
     enable_clients: TorrentClientConfig[] = [] // 此处缓存用户已经添加了的客户端信息
@@ -22,6 +24,13 @@ export default class IYUU extends VuexModule {
         ]
     }
 
+    // FIXME
+    get forceDownloadSite() {
+        return [
+            'hdchina', 'hdcity'
+        ]
+    }
+
     // 理由同上
     get supportClientType() {
         return {
@@ -29,11 +38,9 @@ export default class IYUU extends VuexModule {
         }
     }
 
-    get isForceDownloadSite():(siteName: string) => boolean {
-        return (siteName:string) => {
-            return [
-                'hdchina', 'hdcity'
-            ].includes(siteName)
+    get isForceDownloadSite(): (siteName: string) => boolean {
+        return (siteName: string) => {
+            return this.forceDownloadSite.includes(siteName)
         }
     }
 
@@ -78,7 +85,7 @@ export default class IYUU extends VuexModule {
         }
     }
 
-    @MutationAction({ mutate: ['token']})
+    @MutationAction({mutate: ['token']})
     async setToken(token: string) {
         return {token: token}
     }
@@ -92,7 +99,7 @@ export default class IYUU extends VuexModule {
         }
     }
 
-    @MutationAction({ mutate: ['sites']})
+    @MutationAction({mutate: ['sites']})
     async updateSites(sites: Site[]) {
         return {sites: sites}
     }
@@ -117,7 +124,7 @@ export default class IYUU extends VuexModule {
 
     @Mutation
     removeEnableSite(siteId: number) {
-        const siteInfo : EnableSite = this.enable_sites[siteId]
+        const siteInfo: EnableSite = this.enable_sites[siteId]
         this.enable_sites.splice(siteId, 1)
         Notification.success('成功删除站点 ' + siteInfo.site)
     }
@@ -128,7 +135,7 @@ export default class IYUU extends VuexModule {
     }
 
     @Mutation
-    addEnableClient(client: TorrentClientConfig){
+    addEnableClient(client: TorrentClientConfig) {
         this.enable_clients.push(client)
         Notification.success(`新增下载服务器 ${client.name}(${client.type}) 信息成功`)
     }
@@ -144,11 +151,17 @@ export default class IYUU extends VuexModule {
     removeEnableClient(clientId: number) {
         const clientInfo: TorrentClientConfig = this.enable_clients[clientId]
         this.enable_clients.splice(clientId, 1)
+        ReseedStore.cleanReseededByClientId(clientInfo.uuid)
         Notification.success(`成功删除下载服务器 ${clientInfo.name}(${clientInfo.type})`)
     }
 
     @MutationAction({mutate: ['enable_clients']})
     async cleanEnableClients() {
+        for (let i = 0; i < this.enable_clients.length; i++) {
+            const clientInfo = this.enable_clients[i]
+            ReseedStore.cleanReseededByClientId(clientInfo.uuid)
+        }
+
         return {enable_clients: []}
     }
 }

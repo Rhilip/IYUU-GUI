@@ -121,7 +121,7 @@ export default {
           breakPos = link.lastIndexOf('/') + 1
         }
 
-        return link.slice(0, breakPos) + '*'.repeat(link.length - breakPos)
+        return link.slice(0, breakPos) + '*'.repeat(20)
       }
     },
 

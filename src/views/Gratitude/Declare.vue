@@ -204,6 +204,18 @@ export default {
           note: 'A modern JavaScript utility library delivering modularity, performance & extras.',
           link: 'https://lodash.com/'
         },
+        {
+          name: 'Day.js',
+          version: '1.8.29',
+          note: 'Fast 2kB alternative to Moment.js with the same modern API',
+          link: 'https://dayjs.gitee.io/zh-CN/'
+        },
+        {
+          name: 'cancelable-promise',
+          version: '3.1.1',
+          note: 'A simple cancelable promise',
+          link: 'https://github.com/alkemics/CancelablePromise#readme'
+        },
 
         // ▲▲▲▲其他项目（直接相关的）请添加到此处以上▲▲▲▲
         {

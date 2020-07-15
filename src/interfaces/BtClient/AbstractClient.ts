@@ -47,7 +47,7 @@ export interface TorrentClientConfig {
 }
 
 export interface Torrent {
-    id: string|number;
+    id: string | number;
     infoHash: string;
 
     name: string;
@@ -79,7 +79,7 @@ export interface Torrent {
 }
 
 export interface TorrentFilterRules {
-
+    complete?: boolean;
 }
 
 export interface AddTorrentOptions {

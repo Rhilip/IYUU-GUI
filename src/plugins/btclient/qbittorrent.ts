@@ -107,6 +107,12 @@ export default class Qbittorrent implements TorrentClient {
             filter.hashes = this._normalizeHashes(filter.hashes)
         }
 
+        // 将通用项处理成qbt对应的项目
+        if (filter.complete) {
+            filter.filter = 'completed'
+            delete filter.complete
+        }
+
         const res = await this.request('GET', '/torrents/info', filter)
         return res.data.map((torrent: rawTorrent) => this._normalizeTorrent(torrent))
     }

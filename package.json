@@ -16,8 +16,10 @@
   "main": "background.js",
   "dependencies": {
     "axios": "^0.19.2",
+    "cancelable-promise": "^3.1.1",
     "cookie": "^0.4.1",
     "core-js": "^3.6.5",
+    "dayjs": "^1.8.29",
     "element-ui": "^2.4.5",
     "lodash": "^4.17.15",
     "url-join": "^4.0.1",

@@ -2399,6 +2399,11 @@ camelcase@^5.0.0, camelcase@^5.3.1:
   resolved "https://registry.npm.taobao.org/camelcase/download/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha1-48mzFWnhBoEd8kL3FXJaH0xJQyA=
 
+cancelable-promise@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.npm.taobao.org/cancelable-promise/download/cancelable-promise-3.1.1.tgz#b3d5e1287b1bd625b19b0a5e7ae1bb2c4672bfcf"
+  integrity sha1-s9XhKHsb1iWxmwpeeuG7LEZyv88=
+
 caniuse-api@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npm.taobao.org/caniuse-api/download/caniuse-api-3.0.0.tgz#5e4d90e2274961d46291997df599e3ed008ee4c0"
@@ -3186,6 +3191,11 @@ dashdash@^1.12.0:
   integrity sha1-hTz6D3y+L+1d4gMmuN1YEDX24vA=
   dependencies:
     assert-plus "^1.0.0"
+
+dayjs@^1.8.29:
+  version "1.8.29"
+  resolved "https://registry.npm.taobao.org/dayjs/download/dayjs-1.8.29.tgz?cache=0&sync_timestamp=1593706682165&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fdayjs%2Fdownload%2Fdayjs-1.8.29.tgz#5d23e341de6bfbd206c01136d2fb0f01877820f5"
+  integrity sha1-XSPjQd5r+9IGwBE20vsPAYd4IPU=
 
 de-indent@^1.0.2:
   version "1.0.2"
