@@ -2,7 +2,6 @@
     <el-dialog
             :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
-            class="dialog-add-new-site"
             :title="`编辑站点 - ${form.site}`"
             width="60%"
             top="8vh"

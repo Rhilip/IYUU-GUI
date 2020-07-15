@@ -2,7 +2,7 @@
     <div>
         <el-button type="warning"
                    @click="test">
-            点击清理
+            点击测试
         </el-button>
 </div>
 </template>

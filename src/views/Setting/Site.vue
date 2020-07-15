@@ -63,8 +63,9 @@
             </div>
         </el-card>
 
-        <SiteAdd :is-visible="dialogSiteAddVisible" @close-site-add-dialog="dialogSiteAddVisible = false" />
-        <SiteEdit :is-visible="dialogSiteEditVisible" @close-site-edit-dialog="dialogSiteEditVisible = false"  :info="toEditSite" />
+        <SiteAdd :is-visible="dialogSiteAddVisible" @close-site-add-dialog="dialogSiteAddVisible = false"/>
+        <SiteEdit :info="toEditSiteInfo" :is-visible="dialogSiteEditVisible"
+                  @close-site-edit-dialog="dialogSiteEditVisible = false"/>
     </div>
 </template>
 
@@ -83,7 +84,7 @@ export default {
       showFullUrl: false,
       dialogSiteAddVisible: false,
 
-      toEditSite: {},
+      toEditSiteInfo: {},
       dialogSiteEditVisible: false
     }
   },
@@ -131,7 +132,7 @@ export default {
     },
 
     handleSiteEdit (index, row) {
-      this.toEditSite = row
+      this.toEditSiteInfo = row
       this.dialogSiteEditVisible = true
     },
 

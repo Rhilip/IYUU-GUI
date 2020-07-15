@@ -66,17 +66,22 @@
         </el-card>
 
         <ClientAdd :is-visible="dialogClientAddVisible" @close-client-add-dialog="dialogClientAddVisible = false" />
+        <ClientEdit :is-visible="dialogClientEditVisible" @close-client-edit-dialog="dialogClientEditVisible = false" :info="toEditClientInfo" />
     </div>
 </template>
 
 <script>
 import ClientAdd from "../../components/Setting/BtClient/ClientAdd";
+import ClientEdit from "../../components/Setting/BtClient/ClientEdit";
 export default {
   name: 'BtClient',
-  components: {ClientAdd},
+  components: {ClientEdit, ClientAdd},
   data() {
     return {
-      dialogClientAddVisible: false
+      dialogClientAddVisible: false,
+
+      toEditClientInfo: {},
+      dialogClientEditVisible: false
     }
   },
   methods: {
@@ -84,8 +89,9 @@ export default {
       this.dialogClientAddVisible = true
     },
 
-    handleClientEdit() {
-
+    handleClientEdit(index,row) {
+      this.toEditClientInfo = row
+      this.dialogClientEditVisible = true
     },
 
     handleClientDelete(index, row) {

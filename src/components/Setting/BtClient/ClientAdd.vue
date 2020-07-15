@@ -2,15 +2,14 @@
     <el-dialog
             :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
-            class="dialog-add-new-site"
             title="添加新下载服务器"
             top="8vh"
             width="60%"
             @close="handleDialogClose">
         <div>
-            <el-form ref="client_add_form" :model="client_add_form" label-position="top">
-                <el-form-item label="下载服务器类型" prop="site">
-                    <el-select v-model="client_add_form.site"
+            <el-form ref="form" :model="form" label-position="top">
+                <el-form-item label="下载服务器类型" prop="type">
+                    <el-select v-model="form.type"
                                default-first-option filterable
                                placeholder="请选择"
                                @change="handleClientTypeSelectChange">
@@ -36,7 +35,7 @@
                             <i class="el-icon-info" />
                         </el-tooltip>
                     </template>
-                    <el-input v-model="client_add_form.name" :disabled="disable_client_form" />
+                    <el-input v-model="form.name" :disabled="disable_form" />
                 </el-form-item>
                 <el-form-item prop="address">
                     <template slot="label">
@@ -48,28 +47,28 @@
                             <i class="el-icon-info" />
                         </el-tooltip>
                     </template>
-                    <el-input v-model="client_add_form.address" :disabled="disable_client_form" />
+                    <el-input v-model="form.address" :disabled="disable_form" />
                 </el-form-item>
-                <el-form-item v-if="client_add_form.hasOwnProperty('username')" label="登录用户名" prop="username">
-                    <el-input v-model="client_add_form.username" :disabled="disable_client_form" />
+                <el-form-item v-if="form.hasOwnProperty('username')" label="登录用户名" prop="username">
+                    <el-input v-model="form.username" :disabled="disable_form" />
                 </el-form-item>
                 <el-form-item label="登录密码" prop="password">
-                    <el-input v-model="client_add_form.password" show-password :disabled="disable_client_form" />
+                    <el-input v-model="form.password" show-password :disabled="disable_form" />
                 </el-form-item>
-                <el-form-item label="连接超时事件" prop="timeout">
-                    <el-slider v-model="client_add_form.timeout"
+                <el-form-item label="连接超时时间" prop="timeout">
+                    <el-slider v-model="form.timeout"
                                :format-tooltip="formatTimeoutTooltip"
                                :marks="marks" :max="800e3" :min="5e3"
-                               :step="1000" :disabled="disable_client_form" />
+                               :step="1000" :disabled="disable_form" />
                 </el-form-item>
                 <el-form-item label="客户端ID（自动生成）" prop="uuid">
-                    <el-input v-model="client_add_form.uuid" :disabled="true" />
+                    <el-input v-model="form.uuid" :disabled="true" />
                 </el-form-item>
             </el-form>
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button @click="handleDialogClose">取 消</el-button>
-            <el-button type="primary" @click="handleClientAddSave">确 定</el-button>
+            <el-button type="primary" :disabled="disable_save_btn" @click="handleClientAddSave">确 定</el-button>
         </span>
     </el-dialog>
 </template>
@@ -90,9 +89,10 @@
     data() {
       return {
         visible: false,
-        disable_client_form: true,
+        disable_form: true,
+        disable_save_btn: false,
         clients: {},
-        client_add_form: {},
+        form: {},
         marks: {
           5e3: '5 秒',
           60e3: {
@@ -119,8 +119,8 @@
 
     methods: {
       cleanFrom() {
-        this.disable_client_form = true
-        this.client_add_form = {}
+        this.disable_form = true
+        this.form = {}
       },
 
       handleDialogClose() {
@@ -128,22 +128,25 @@
       },
 
       handleClientTypeSelectChange(clientType) {
-        this.client_add_form = this.clients[clientType]
-        this.client_add_form.uuid = this.$uuid.v4()
-        this.disable_client_form = false
+        this.form = this.clients[clientType]
+        this.form.uuid = this.$uuid.v4()
+        this.disable_form = false
       },
 
       async handleClientAddSave() {
+        this.disable_save_btn = true
         this.$notify.info('正在进行下载服务器连接测试，请耐心等待')
-        const client = factory(this.client_add_form)
+        const client = factory(this.form)
         try {
           const pong = await client.ping()
           if (pong) {
-            this.$store.commit('IYUU/addEnableClient', this.client_add_form)
+            this.$store.commit('IYUU/addEnableClient', this.form)
             this.handleDialogClose()
           }
         } catch (e) {
           this.$notify.error('不能正常连接到下载服务器，请检查你的配置或增加超时时间')
+        } finally {
+          this.disable_save_btn = false
         }
       },
 
