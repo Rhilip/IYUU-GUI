@@ -40,6 +40,14 @@ export default {
         {
           label: '站点缓存',
           key: 'IYUU/cleanSites'
+        },
+        {
+          label: '所有添加站点',
+          key: 'IYUU/cleanEnableSites'
+        },
+        {
+          label: '所有添加下载服务器',
+          key: 'IYUU/cleanEnableClients'
         }
       ]
     }
@@ -49,7 +57,7 @@ export default {
     cleanCache() {
       this.$store.dispatch(this.cache_clean_key).then(() => {
         const label = this.cache_clean_keys.find(o => o.key === this.cache_clean_key).label
-        this.$notify.success(`清除 ${label} 项成功`)
+        this.$notify.success(`清除配置项 ${label} 成功`)
       })
     }
   }

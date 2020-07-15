@@ -140,6 +140,11 @@ export default class IYUU extends VuexModule {
         Notification.success('成功删除站点 ' + siteInfo.site)
     }
 
+    @MutationAction({mutate: ['enable_sites']})
+    async cleanEnableSites() {
+        return {enable_sites: []}
+    }
+
     @Mutation
     addEnableClient(client: TorrentClientConfig){
         this.enable_clients.push(client)
@@ -158,5 +163,10 @@ export default class IYUU extends VuexModule {
         const clientInfo: TorrentClientConfig = this.enable_clients[clientId]
         this.enable_clients.splice(clientId, 1)
         Notification.success(`成功删除下载服务器 ${clientInfo.name}(${clientInfo.type})`)
+    }
+
+    @MutationAction({mutate: ['enable_clients']})
+    async cleanEnableClients() {
+        return {enable_clients: []}
     }
 }
