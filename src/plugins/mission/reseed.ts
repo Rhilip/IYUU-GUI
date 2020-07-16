@@ -9,6 +9,7 @@ import factory from "@/plugins/btclient/factory";
 import iyuuEndpoint from "@/plugins/iyuu";
 
 import {MissionStore} from '@/store/store-accessor' // circular import; OK though
+import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 
 export interface ReseedStartOption {
     weChatNotify?: {
@@ -27,7 +28,7 @@ export default class Reseed {
             logId: logId
         })
 
-        callback(logId)  // 使用callback立即返回logId信息，剩下让它慢慢跑
+        callback(logId)  // 使用callback立即返回
 
         const logger = (msg: string) => {
             MissionStore.appendLog({logId: logId, logMessage: msg})
@@ -67,7 +68,7 @@ export default class Reseed {
                     })
 
                     for (let k = 0; k < reseedTorrentsData.torrent.length; k++) {
-                        const reseedTorrent = reseedTorrentsData.torrent[k]
+                        const reseedTorrent: TorrentInfo = reseedTorrentsData.torrent[k]
                         break;
                     }
                 }

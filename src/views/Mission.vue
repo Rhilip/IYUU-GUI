@@ -9,7 +9,7 @@
                     <el-col :span="4">
                         <el-button type="success"
                                    :disabled="missionState.processing"
-                                   @click="test">
+                                   @click="handlerReseedMission">
                             辅种任务
                         </el-button>
                     </el-col>
@@ -21,12 +21,12 @@
                     <el-col :span="4">
                         <el-button type="warning"
                                    :disabled="missionState.processing"
-                                   @click="test">
+                                   @click="handlerTransferMission">
                             转钟任务
                         </el-button>
                     </el-col>
                     <el-col :span="20">
-                        // 还没完成
+                        // 还没开始写
                     </el-col>
                 </el-row>
             </div>
@@ -34,7 +34,7 @@
         <el-card class="main-card">
             <div slot="header" class="clearfix">
                 <b>任务日志</b>
-                <div v-if="logId !== ''" style="float: right">
+                <div v-if="logId !== '' && logs.length > 0" style="float: right">
                     <transition v-if="missionState.processing" name="el-fade-in-linear">
                         <i v-show="showBreathIcon" class="transition-box el-icon-warning-outline" style="color: #2b92d4" />
                     </transition>
@@ -62,6 +62,7 @@
     name: 'Mission',
     data() {
       return {
+        logId: '',
         logs: [],
         showBreathIcon: true,
       }
@@ -71,15 +72,25 @@
       missionState: function () {
         return this.$store.state.Mission.currentMission
       },
-      logId: function () {
-        return this.missionState.logId
-      }
     },
 
     mounted() {
-      if (this.logId) {
+      if (this.missionState.processing) {
+        this.startMissionProcessTimer()
+        this.startBreathTimer()
+      } else if (this.missionState.logId) {
         this.deepUpdateLog()
       }
+    },
+
+    destroyed() {
+      if (this.breathTimerId) {
+        this.cleanBreathTimer()
+      }
+      if (this.missionProcessTimer) {
+        this.cleanMissionProcessTimer()
+      }
+      this.cleanMission()
     },
 
     methods: {
@@ -88,6 +99,8 @@
         this.showBreathIcon = true
       },
 
+      // 使用clone的方式，强制更新
+      // 反正客户端不用特别考虑性能问题
       deepUpdateLog() {
         this.logs = _.clone(this.$store.getters['Mission/logByLogId'](this.logId))
       },
@@ -114,7 +127,7 @@
         this.missionProcessTimer = null
       },
 
-      test() {
+      handlerReseedMission() {
         this.cleanMission()
 
         Reseed.start(this.$store.state.IYUU.enable_sites, this.$store.state.IYUU.enable_clients, (logId) => {
@@ -127,6 +140,10 @@
           this.cleanBreathTimer()
           this.showBreathIcon = true
         })
+      },
+
+      handlerTransferMission() {
+
       },
 
       formatLogs(logs) {

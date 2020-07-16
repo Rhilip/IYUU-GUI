@@ -17,10 +17,11 @@
                     <el-input v-model="form.cookies" :autosize="{ minRows: 2}" type="textarea" />
                 </el-form-item>
                 <el-form-item label="高级设置" prop="rate_limit">
-                    推送方式：<el-switch
+                    下载器推送方式：<el-switch
                             v-model="form.download_torrent"
-                            active-text="先下载链接然后发送给下载器"
-                            inactive-text="直接推送链接给下载器让其下载" :disabled="disable_link" />
+                            active-text="发送种子文件"
+                            inactive-text="发送种子链接" inactive-color="#13ce66"
+                            :disabled="disable_link" />
                     <br>
                     下载频率限制（为0时不做限制）：<br>
                     <el-row type="flex" justify="space-around">
