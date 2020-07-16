@@ -1,9 +1,5 @@
 import {Module, Mutation, MutationAction, VuexModule} from "vuex-module-decorators";
-
-export interface LogInfo {
-    timestamp: number,
-    message: string
-}
+import {LogInfo} from "@/interfaces/store";
 
 @Module({namespaced: true, name: 'Mission'})
 export default class Mission extends VuexModule {

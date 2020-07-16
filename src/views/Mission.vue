@@ -54,9 +54,9 @@
 </template>
 
 <script>
-  import Reseed from '../plugins/mission/reseed'
-  import dayjs from 'dayjs'
   import _ from 'lodash'
+  import Reseed from '../plugins/mission/reseed'
+  import {formatLogs} from "../plugins/common";
 
   export default {
     name: 'Mission',
@@ -65,6 +65,7 @@
         logId: '',
         logs: [],
         showBreathIcon: true,
+        formatLogs: formatLogs,
       }
     },
 
@@ -145,12 +146,6 @@
       handlerTransferMission() {
 
       },
-
-      formatLogs(logs) {
-        return logs
-          .map(log => `${dayjs(log.timestamp).format('YYYY-MM-DD HH:mm:ss')} ${log.message}`)  // 对象整理成字符串
-          .join('\n')  // 用 \n 分割
-      }
     }
   }
 </script>
