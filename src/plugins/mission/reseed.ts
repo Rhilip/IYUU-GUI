@@ -7,7 +7,7 @@ import btClientFactory from "@/plugins/btclient/factory";
 
 import iyuuEndpoint from "@/plugins/iyuu";
 
-import {MissionStore, IYUUStore} from '@/store/store-accessor' // circular import; OK though
+import {MissionStore, IYUUStore, StatueStore} from '@/store/store-accessor' // circular import; OK though
 import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 
 export interface ReseedStartOption {
@@ -20,6 +20,7 @@ export interface ReseedStartOption {
 
 export default class Reseed {
     static async start(sites: EnableSite[], clientsConfig: TorrentClientConfig[], callback: Function, options?: Partial<ReseedStartOption>): Promise<void> {
+        StatueStore.missionStart()
         const logId = UUID.v4()
 
         MissionStore.updateCurrentMissionState({
@@ -104,6 +105,7 @@ export default class Reseed {
                             const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
                             if (addTorrentStatue) {
                                 logger(`添加种子 ${reseedTorrent.info_hash} 成功，来自站点 ${siteInfoForThisTorrent.site}。`)
+                                StatueStore.torrentReseed()
                             } else {
                                 logger(`添加种子 ${reseedTorrent.info_hash} 失败，站点 ${siteInfoForThisTorrent.site}，请考虑手动下载添加，链接 ${torrentLink} 。`)
                             }
