@@ -9,7 +9,7 @@
                     <el-col :span="4">
                         <el-button type="success"
                                    :disabled="missionState.processing"
-                                   @click="handlerReseedMission">
+                                   @click="handlerReseedMissionDialogOpen">
                             辅种任务
                         </el-button>
                     </el-col>
@@ -50,22 +50,27 @@
                 </el-scrollbar>
             </div>
         </el-card>
+
+        <Reseed :is-visible="dialogReseedVisible" @close-mission-reseed-dialog="dialogReseedVisible = false" @start-reseed-mission="handlerReseedMission" />
     </div>
 </template>
 
 <script>
   import _ from 'lodash'
-  import Reseed from '../plugins/mission/reseed'
+  import ReseedMission from '../plugins/mission/reseed'
   import {formatLogs} from "../plugins/common";
+  import Reseed from "../components/Mission/Reseed";
 
   export default {
     name: 'Mission',
+    components: {Reseed},
     data() {
       return {
         logId: '',
         logs: [],
         showBreathIcon: true,
         formatLogs: formatLogs,
+        dialogReseedVisible: false
       }
     },
 
@@ -128,10 +133,15 @@
         this.missionProcessTimer = null
       },
 
-      handlerReseedMission() {
+      handlerReseedMissionDialogOpen() {
+        this.dialogReseedVisible = true
+      },
+
+      handlerReseedMission(reseedForm) {
+        console.log(reseedForm)
         this.cleanMission()
 
-        Reseed.start(this.$store.state.IYUU.enable_sites, this.$store.state.IYUU.enable_clients, (logId) => {
+        ReseedMission.start(reseedForm.sites,reseedForm.clients, reseedForm.options, (logId) => {
           this.logId = logId
           this.startMissionProcessTimer()
           this.startBreathTimer()

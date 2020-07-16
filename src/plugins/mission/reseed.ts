@@ -11,7 +11,8 @@ import {MissionStore, IYUUStore, StatueStore} from '@/store/store-accessor' // c
 import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 
 export interface ReseedStartOption {
-    label: string
+    dryRun: boolean
+    label: string,
     weChatNotify: {
         summary: boolean,   // 是否推送摘要信息
         fullLog: boolean    // 是否推送详细日志
@@ -19,7 +20,7 @@ export interface ReseedStartOption {
 }
 
 export default class Reseed {
-    static async start(sites: EnableSite[], clientsConfig: TorrentClientConfig[], callback: Function, options?: Partial<ReseedStartOption>): Promise<void> {
+    static async start(sites: EnableSite[], clientsConfig: TorrentClientConfig[], options: Partial<ReseedStartOption>, callback: Function): Promise<void> {
         StatueStore.missionStart()
         const logId = UUID.v4()
 
@@ -35,6 +36,9 @@ export default class Reseed {
         }
 
         logger(`开始辅种任务，任务Id： ${logId}。启用下载服务器数 ${clientsConfig.length}， 启用站点数 ${sites.length}。`)
+        if (options.dryRun) {
+            logger(`这是一次空运行，软件不会把种子链接或者种子文件发送给做种服务器，如果该站点属于特殊站点，软件同样不会解析页面来获取下载链接。`)
+        }
 
         // 筛选出启用站点id
         const siteIds = sites.map(s => s.id)
@@ -85,6 +89,15 @@ export default class Reseed {
 
                             // 将种子连接模板中剩下的{} 替换成 IYUU给出的种子id
                             let torrentLink = siteInfoForThisTorrent.link.replace(/{}/ig, String(reseedTorrent.torrent_id))
+
+                            if (options.dryRun) {
+                                if (IYUUStore.isForceDownloadSite(siteInfoForThisTorrent.site)) {
+                                    logger(`将会解析 ${siteInfoForThisTorrent.site} 页面，并获取 种子为 ${reseedTorrent.torrent_id} 的下载链接，再推送到下载器`)
+                                } else {
+                                    logger(`将会直接推送 下载链接 ${torrentLink} 到下载器`)
+                                }
+                                continue;
+                            }
 
                             // TODO 如果是特殊站点，则弃用模板生成的下载链接，改成使用自建逻辑进行操作
                             if (IYUUStore.isForceDownloadSite(siteInfoForThisTorrent.site)) {
