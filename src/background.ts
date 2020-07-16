@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, session } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import * as path from "path";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -19,11 +20,14 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+declare var __static: string;
+
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
     width: 1000,
     height: 700,
+    icon: path.join(__static, 'assets/iyuu.png'),
     useContentSize: true,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
