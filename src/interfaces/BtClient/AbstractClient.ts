@@ -89,10 +89,15 @@ export interface AddTorrentOptions {
     localDownload: boolean;
 
     /**
+     * 是否将种子置于暂停状态
+     */
+    addAtPaused: boolean;
+
+    /**
      * called a label in some clients and a category in others
      * Notice: Some clients didn't support it
      */
-    label: string;
+    label?: string;
 }
 
 export enum TorrentState {

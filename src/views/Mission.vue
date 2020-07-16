@@ -22,7 +22,7 @@
                         <el-button type="warning"
                                    :disabled="missionState.processing"
                                    @click="handlerTransferMission">
-                            转钟任务
+                            转种任务
                         </el-button>
                     </el-col>
                     <el-col :span="20">

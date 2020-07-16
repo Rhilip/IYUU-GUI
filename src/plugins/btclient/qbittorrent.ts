@@ -89,8 +89,11 @@ export default class Qbittorrent implements TorrentClient {
             delete options.label
         }
 
-        // TODO 移动到辅种模块中，而不是强制指定
-        options.paused = 'true';  // 添加时强制暂停
+        if ('addAtPaused' in options) {
+            options.paused = options.addAtPaused ? 'true' : 'false';
+            delete options.addAtPaused
+        }
+
         options.useAutoTMM = 'false';  // 关闭自动管理
 
         for (const [key, value] of Object.entries(options)) {
