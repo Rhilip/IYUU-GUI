@@ -44,7 +44,7 @@
             </div>
             <div>
                 <el-scrollbar>
-                    <div style="height: 295px">
+                    <div style="height: 285px">
                         <pre v-if="logId !== ''">{{ formatLogs(logs) }}</pre>
                     </div>
                 </el-scrollbar>

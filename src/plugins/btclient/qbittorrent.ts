@@ -24,7 +24,7 @@ export const defaultQbittorrentConfig: QbittorrentTorrentClientConfig = {
 
 export default class Qbittorrent implements TorrentClient {
     isLogin: boolean | null = null;
-    lastLoginAt: number = 0;
+    lastCheckLoginAt: number = 0;
     config: QbittorrentTorrentClientConfig;
 
     constructor(options: Partial<QbittorrentTorrentClientConfig> = {}) {
@@ -32,8 +32,14 @@ export default class Qbittorrent implements TorrentClient {
     }
 
     async ping(): Promise<boolean> {
-        const pong = await this.login();
-        return pong.data === 'Ok.'
+        try {
+            const pong = await this.login();
+            this.isLogin = pong.data === 'Ok.'
+            this.lastCheckLoginAt = Date.now()
+            return this.isLogin
+        } catch (e) {
+            return false
+        }
     }
 
     async login(): Promise<AxiosResponse> {
@@ -52,9 +58,8 @@ export default class Qbittorrent implements TorrentClient {
                   headers?: any): Promise<AxiosResponse> {
         // qbt 默认Session时长 3600s，这里取 600s
         // FIXME 是否每次操作都login一下好些？就像PTPP一样
-        if (this.isLogin === null || Date.now() + 600 * 1e3 > this.lastLoginAt) {
-            await this.login()
-            this.lastLoginAt = Date.now()
+        if (this.isLogin === null || Date.now() - 600 * 1e3 > this.lastCheckLoginAt) {
+            await this.ping()
         }
 
         return await axios.request({
