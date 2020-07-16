@@ -25,21 +25,22 @@
                             width="80"
                             align="center" />
                     <el-table-column
-                            label="密码"
-                            prop="password"
-                            width="120"
+                            label="Hash缓存"
+                            width="80"
                             align="center">
-                        <template slot-scope="/* eslint-disable */scope">
-                            {{ '*'.repeat(10) }}
+                        <template slot-scope="scope">
+                            <span>{{ $store.getters['Mission/reseededByClientId'](scope.row.uuid).length }}</span>
+                            <el-button type="text" icon="el-icon-delete" circle size="mini"
+                                       @click="handleClientCacheClean(scope.$index, scope.row)" />
                         </template>
                     </el-table-column>
-                    <el-table-column align="right" width="150">
+                    <el-table-column align="right" width="160">
                         <template slot="header">
                             <el-button
                                     size="medium"
                                     type="success"
                                     @click="handleClientAddBtn()">
-                                <i class="el-icon-circle-plus" />&nbsp;&nbsp;添加新客户端
+                                <i class="el-icon-circle-plus" />&nbsp;&nbsp;添加新下载器
                             </el-button>
                         </template>
                         <template slot-scope="scope">
@@ -66,7 +67,7 @@
         </el-card>
 
         <ClientAdd :is-visible="dialogClientAddVisible" @close-client-add-dialog="dialogClientAddVisible = false" />
-        <ClientEdit :is-visible="dialogClientEditVisible" @close-client-edit-dialog="dialogClientEditVisible = false" :info="toEditClientInfo" />
+        <ClientEdit :is-visible="dialogClientEditVisible" :info="toEditClientInfo" @close-client-edit-dialog="dialogClientEditVisible = false" />
     </div>
 </template>
 
@@ -98,6 +99,13 @@ export default {
       this.$confirm(`确定删除下载器 ${row.name}(${row.type})？`)
         .then(() => {
           this.$store.commit('IYUU/removeEnableClient', index)
+        })
+    },
+
+    handleClientCacheClean(index,row) {
+      this.$confirm(`确定清空该下载器 ${row.name}(${row.type}) 的 infoHash缓存？`)
+        .then(() => {
+          this.$store.commit('Mission/cleanReseededByClientId', row.uuid)
         })
     }
   }
