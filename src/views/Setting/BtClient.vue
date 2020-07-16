@@ -15,7 +15,7 @@
                     <el-table-column
                             label="下载器名称"
                             prop="name"
-                            width="180" />
+                            width="120" />
                     <el-table-column
                             label="服务器地址"
                             prop="address" />

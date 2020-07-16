@@ -8,7 +8,7 @@ import factory from "@/plugins/btclient/factory";
 
 import iyuuEndpoint from "@/plugins/iyuu";
 
-import {ReseedStore} from '@/store/store-accessor' // circular import; OK though
+import {MissionStore} from '@/store/store-accessor' // circular import; OK though
 
 export interface ReseedStartOption {
     weChatNotify?: {
@@ -21,10 +21,16 @@ export interface ReseedStartOption {
 export default class Reseed {
     static async start(sites: EnableSite[], clientsConfig: TorrentClientConfig[], callback: Function, options?: ReseedStartOption): Promise<void> {
         const logId = UUID.v4()
+
+        MissionStore.updateCurrentMissionState({
+            processing: true,
+            logId: logId
+        })
+
         callback(logId)  // 使用callback立即返回logId信息，剩下让它慢慢跑
 
         const logger = (msg: string) => {
-            ReseedStore.appendLog({logId: logId, logMessage: msg})
+            MissionStore.appendLog({logId: logId, logMessage: msg})
         }
 
         logger(`开始辅种任务，任务Id： ${logId}。启用下载服务器数 ${clientsConfig.length}， 启用站点数 ${sites.length}。`)
@@ -42,7 +48,7 @@ export default class Reseed {
                 })
 
                 // 从缓存中获取该下载器已经转发过的infoHash
-                const reseedTorrentInfoHashs = ReseedStore.reseededByClientId(client.config.uuid)
+                const reseedTorrentInfoHashs = MissionStore.reseededByClientId(client.config.uuid)
 
                 // 筛选出未被转发过的种子infohash
                 const unReseedTorrent = torrents.filter(t => !reseedTorrentInfoHashs.includes(t.infoHash))
@@ -70,5 +76,11 @@ export default class Reseed {
                 // TODO
             }
         }
+
+        logger(`辅种任务已完成，任务Id： ${logId}`)
+        MissionStore.updateCurrentMissionState({
+            processing: false,
+            logId: logId
+        })
     }
 }

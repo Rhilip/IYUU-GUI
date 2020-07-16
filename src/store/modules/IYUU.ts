@@ -7,7 +7,7 @@ import {Site, EnableSite} from "@/interfaces/IYUU/Site";
 import {defaultQbittorrentConfig} from "@/plugins/btclient/qbittorrent";
 import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
 
-import {ReseedStore} from '@/store/store-accessor' // circular import; OK though
+import {MissionStore} from '@/store/store-accessor' // circular import; OK though
 
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
@@ -151,7 +151,7 @@ export default class IYUU extends VuexModule {
     removeEnableClient(clientId: number) {
         const clientInfo: TorrentClientConfig = this.enable_clients[clientId]
         this.enable_clients.splice(clientId, 1)
-        ReseedStore.cleanReseededByClientId(clientInfo.uuid)
+        MissionStore.cleanReseededByClientId(clientInfo.uuid)
         Notification.success(`成功删除下载服务器 ${clientInfo.name}(${clientInfo.type})`)
     }
 
@@ -159,7 +159,7 @@ export default class IYUU extends VuexModule {
     async cleanEnableClients() {
         for (let i = 0; i < this.enable_clients.length; i++) {
             const clientInfo = this.enable_clients[i]
-            ReseedStore.cleanReseededByClientId(clientInfo.uuid)
+            MissionStore.cleanReseededByClientId(clientInfo.uuid)
         }
 
         return {enable_clients: []}

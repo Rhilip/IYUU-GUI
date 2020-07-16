@@ -8,18 +8,14 @@
 </template>
 
 <script>
-import factory from "../../plugins/btclient/factory";
-import iyuuEndpoint from "../../plugins/iyuu";
-
 export default {
   name: 'Other',
+  data() {
+    return {
+    }
+  },
   methods: {
-    async test() {
-      const client = factory(this.$store.state.IYUU.enable_clients[0])
-      const torrents = await client.getAllTorrents()
-      const torrents_infohash = torrents.map((s) => s.infoHash)
-      const resp = await iyuuEndpoint.apiHash(torrents_infohash)
-      console.log(resp)
+    test() {
     }
   }
 }

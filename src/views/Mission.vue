@@ -8,7 +8,7 @@
                 <el-row>
                     <el-col :span="4">
                         <el-button type="warning"
-                                   :disabled="processMission"
+                                   :disabled="missionState.processing"
                                    @click="test">
                             辅种任务
                         </el-button>
@@ -23,11 +23,11 @@
             <div slot="header" class="clearfix">
                 <b>任务日志</b>
                 <div v-if="logId !== ''" style="float: right">
-                    <transition v-if="processMission" name="el-fade-in-linear">
+                    <transition v-if="missionState.processing" name="el-fade-in-linear">
                         <i v-show="showBreathIcon" class="transition-box el-icon-warning-outline" style="color: #2b92d4" />
                     </transition>
                     <i v-else class="el-icon-circle-check" style="color:#16cd3d;" />
-                    {{ processMission ? '正在运行' : '运行完成' }}，运行id： {{ logId }}
+                    {{ missionState.processing ? '正在运行' : '运行完成' }}，运行id： {{ logId }}
                 </div>
             </div>
             <div>
@@ -50,25 +50,34 @@
     name: 'Mission',
     data() {
       return {
-        logId: '',
         logs: [],
         showBreathIcon: true,
-        processMission: false
       }
     },
 
-    computed: {},
+    computed: {
+      missionState: function () {
+        return this.$store.state.Mission.currentMission
+      },
+      logId: function () {
+        return this.missionState.logId
+      }
+    },
+
+    mounted() {
+      if (this.logId) {
+        this.deepUpdateLog()
+      }
+    },
 
     methods: {
       cleanMission() {
-        this.logId = ''
         this.logs = []
         this.showBreathIcon = true
-        this.processMission = false
       },
 
       deepUpdateLog() {
-        this.logs = _.clone(this.$store.getters['Reseed/logByLogId'](this.logId))
+        this.logs = _.clone(this.$store.getters['Mission/logByLogId'](this.logId))
       },
 
       startBreathTimer() {
@@ -95,7 +104,6 @@
 
       test() {
         this.cleanMission()
-        this.processMission = true
 
         Reseed.start(this.$store.state.IYUU.enable_sites, this.$store.state.IYUU.enable_clients, (logId) => {
           this.logId = logId
@@ -106,7 +114,6 @@
           this.cleanMissionProcessTimer()
           this.cleanBreathTimer()
           this.showBreathIcon = true
-          this.processMission = false
         })
       },
 
