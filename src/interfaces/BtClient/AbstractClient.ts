@@ -94,6 +94,11 @@ export interface AddTorrentOptions {
     addAtPaused: boolean;
 
     /**
+     * 种子下载地址
+     */
+    savePath: string;
+
+    /**
      * called a label in some clients and a category in others
      * Notice: Some clients didn't support it
      */

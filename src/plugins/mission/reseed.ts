@@ -64,21 +64,22 @@ export default class Reseed {
                 // 请求IYUU服务器
                 const resp = await iyuuEndpoint.apiHash(unReseedTorrent.map(t => t.infoHash))
                 for (let j = 0; j < resp.data.length; j++) {
-                    const reseedTorrentsData = resp.data[j]
+                    const reseedTorrentsDataFromIYUU = resp.data[j]
+                    const reseedTorrentDataFromClient = torrents.find(t=> t.infoHash === reseedTorrentsDataFromIYUU.hash)
 
                     // 筛选需要转发的种子
-                    const canReseedTorrents = reseedTorrentsData.torrent.filter(t => {
+                    const canReseedTorrents = reseedTorrentsDataFromIYUU.torrent.filter(t => {
                         return siteIds.includes(t.sid) // 对应种子在转发站点中
                             && !reseedTorrentInfoHashs.includes(t.info_hash); // 这个种子未命中该下载器的转发缓存
                     })
 
-                    logger(`种子 ${reseedTorrentsData.hash}： IYUU 返回 ${reseedTorrentsData.torrent.length} 个待选种子，其中可添加 ${canReseedTorrents.length} 个`)
+                    logger(`种子 ${reseedTorrentsDataFromIYUU.hash}： IYUU 返回 ${reseedTorrentsDataFromIYUU.torrent.length} 个待选种子，其中可添加 ${canReseedTorrents.length} 个`)
 
                     for (let k = 0; k < canReseedTorrents.length; k++) {
                         const reseedTorrent: TorrentInfo = canReseedTorrents[k]
 
                         const siteInfoForThisTorrent = sites.find(s => s.id === reseedTorrent.sid)
-                        if (siteInfoForThisTorrent) {  // 因为ts限制，这里要加一层判断 siteInfoForThisTorrent 不为 null
+                        if (siteInfoForThisTorrent && reseedTorrentDataFromClient) {  // 因为ts限制，这里要加一层判断（但实际并没有必要）
                             // TODO 检查是否触及到站点流控规则
 
                             // 将种子连接模板中剩下的{} 替换成 IYUU给出的种子id
@@ -90,8 +91,9 @@ export default class Reseed {
                             }
 
                             let downloadOptionsForThisTorrent: AddTorrentOptions = {
+                                savePath: reseedTorrentDataFromClient.savePath,
                                 addAtPaused: true,   // 置于暂停状态
-                                localDownload: siteInfoForThisTorrent.download_torrent,
+                                localDownload: siteInfoForThisTorrent.download_torrent
                             }
 
                             if (options && options.label) {

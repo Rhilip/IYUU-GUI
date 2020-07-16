@@ -10,6 +10,7 @@ import {
 
 import axios, {AxiosResponse, Method} from 'axios'
 import urljoin from 'url-join'
+import {getRandomInt} from "@/plugins/common";
 
 export const defaultQbittorrentConfig: QbittorrentTorrentClientConfig = {
     type: 'qbittorrent',
@@ -80,9 +81,15 @@ export default class Qbittorrent implements TorrentClient {
             const req = await axios.get(urls,{
                 responseType: 'blob'
             })
-            formData.append('torrents', req.data,'file.torrent')
+            formData.append('torrents', req.data, String(getRandomInt(0, 4096)) + '.torrent')
         }
         delete options.localDownload
+
+        // 将通用字段转成qbt字段
+        if (options.savePath) {
+            options.savepath = options.savePath
+            delete options.savePath
+        }
 
         if (options.label) {
             options.category = options.label
