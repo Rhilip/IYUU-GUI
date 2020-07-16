@@ -2,10 +2,10 @@
     <div>
         <el-row type="flex" justify="space-around" style="margin-bottom: 10px">
             <el-col :span="4">
-                <StateCard title="启动" :data="$store.state.startAppCount" prepend="次" />
+                <StateCard title="启动" :data="$store.state.Status.startAppCount" prepend="次" />
             </el-col>
             <el-col :span="5">
-                <StateCard title="任务运行" :data="$store.state.startMissionCount" prepend="次" />
+                <StateCard title="任务运行" :data="$store.state.Status.startMissionCount" prepend="次" />
             </el-col>
             <el-col :span="4">
                 <StateCard title="站点" :data="$store.getters['IYUU/signedSites'].length"
@@ -15,7 +15,7 @@
                 <StateCard title="下载器" :data="$store.getters['IYUU/signedBtClient'].length" />
             </el-col>
             <el-col :span="5">
-                <StateCard title="辅种" :data="$store.state.reseedTorrentCount" prepend="个" />
+                <StateCard title="辅种" :data="$store.state.Status.reseedTorrentCount" prepend="个" />
             </el-col>
         </el-row>
         <el-card class="main-card">

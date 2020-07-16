@@ -8,7 +8,7 @@
   export default {
     name: 'Iyuu',
     created() {
-      this.$store.commit('appStart')
+      this.$store.commit('Status/appStart')
     }
   }
 </script>

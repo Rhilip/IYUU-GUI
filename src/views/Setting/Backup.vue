@@ -68,15 +68,15 @@ export default {
         },
         {
           label: '软件打开计数',
-          key: 'cleanAppStart'
+          key: 'Status/cleanAppStart'
         },
         {
           label: '任务运行计数',
-          key: 'cleanMissionStart'
+          key: 'Status/cleanMissionStart'
         },
         {
           label: '辅种总数计数',
-          key: 'cleanTorrentReseed'
+          key: 'Status/cleanTorrentReseed'
         }
       ]
     }
