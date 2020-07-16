@@ -18,7 +18,10 @@ const initializer = (store: Store<any>) => initializeStores(store)
 export const plugins = [
     initializer,
     createPersistedState({
-        blacklist: ['Mission/appendLog']
+        blacklist: [
+            'Mission/appendLog',
+            'Mission/updateCurrentMissionState'
+        ]
     })
 ]
 

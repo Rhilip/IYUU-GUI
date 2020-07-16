@@ -3,10 +3,10 @@ import {LogInfo} from "@/interfaces/store";
 
 @Module({namespaced: true, name: 'Mission'})
 export default class Mission extends VuexModule {
-    logs: { [logId: string]: LogInfo[] } = {}
+    logs: { [logId: string]: LogInfo[] } = {}  // 不需要持久化
     reseeded: { [clientId: string]: string[] } = {}
 
-    currentMission = {
+    currentMission = {  // 不需要持久化
         logId: '',
         processing: false
     }
