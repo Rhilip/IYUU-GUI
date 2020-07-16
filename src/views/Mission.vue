@@ -117,20 +117,37 @@
         }, 1e3)
       },
 
-      cleanBreathTimer() {
-        clearTimeout(this.breathTimerId)
-        this.breathTimerId = null
-      },
-
       startMissionProcessTimer() {
         this.missionProcessTimer = setInterval(() => {
           this.deepUpdateLog()
         }, 1e3)
       },
 
+      startAllTimer() {
+        this.startBreathTimer()
+        this.startMissionProcessTimer()
+      },
+
+      cleanBreathTimer() {
+        clearTimeout(this.breathTimerId)
+        this.breathTimerId = null
+      },
+
       cleanMissionProcessTimer() {
         clearTimeout(this.missionProcessTimer)
         this.missionProcessTimer = null
+      },
+
+      cleanAllTimer() {
+        this.cleanMissionProcessTimer()
+        this.cleanBreathTimer()
+      },
+
+      cleanMissionFinish() {
+        this.deepUpdateLog()
+        this.cleanAllTimer()
+        this.$store.commit('Mission/updateCurrentMissionState', { processing: false, logId: '' })
+        this.showBreathIcon = true
       },
 
       handlerReseedMissionDialogOpen() {
@@ -147,15 +164,11 @@
 
         ReseedMission.start(reseedForm.sites,reseedForm.clients, reseedForm.options, (logId) => {
           this.logId = logId
-          this.startMissionProcessTimer()
-          this.startBreathTimer()
-        }).catch(() => {
-          this.$notify.error('任务失败')
+          this.startAllTimer()
+        }).catch((e) => {
+          this.$notify.error(`任务失败： ${e}`)
         }).finally(() => {
-          this.deepUpdateLog()
-          this.cleanMissionProcessTimer()
-          this.cleanBreathTimer()
-          this.showBreathIcon = true
+          this.cleanMissionFinish()
         })
       },
 
