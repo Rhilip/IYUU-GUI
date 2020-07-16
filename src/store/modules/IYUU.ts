@@ -157,11 +157,7 @@ export default class IYUU extends VuexModule {
 
     @MutationAction({mutate: ['enable_clients']})
     async cleanEnableClients() {
-        for (let i = 0; i < this.enable_clients.length; i++) {
-            const clientInfo = this.enable_clients[i]
-            MissionStore.cleanReseededByClientId(clientInfo.uuid)
-        }
-
+        await MissionStore.cleanReseeded()
         return {enable_clients: []}
     }
 }

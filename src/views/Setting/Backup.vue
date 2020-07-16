@@ -77,7 +77,11 @@ export default {
         {
           label: '辅种总数计数',
           key: 'Status/cleanTorrentReseed'
-        }
+        },
+        {
+          label: '所有下载器 infoHash 缓存',
+          key: 'Mission/cleanReseeded'
+        },
       ]
     }
   },

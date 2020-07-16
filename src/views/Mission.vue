@@ -82,20 +82,14 @@
 
     mounted() {
       if (this.missionState.processing) {
-        this.startMissionProcessTimer()
-        this.startBreathTimer()
+        this.startAllTimer()
       } else if (this.missionState.logId) {
         this.deepUpdateLog()
       }
     },
 
     destroyed() {
-      if (this.breathTimerId) {
-        this.cleanBreathTimer()
-      }
-      if (this.missionProcessTimer) {
-        this.cleanMissionProcessTimer()
-      }
+      this.cleanAllTimer()
       this.cleanMission()
     },
 
@@ -139,8 +133,12 @@
       },
 
       cleanAllTimer() {
-        this.cleanMissionProcessTimer()
-        this.cleanBreathTimer()
+        if (this.breathTimerId) {
+          this.cleanBreathTimer()
+        }
+        if (this.missionProcessTimer) {
+          this.cleanMissionProcessTimer()
+        }
       },
 
       cleanMissionFinish() {
