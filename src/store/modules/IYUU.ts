@@ -90,11 +90,11 @@ export default class IYUU extends VuexModule {
         return {token: token}
     }
 
-    @MutationAction({mutate: ['token', 'sites', 'enable_clients']})
+    @MutationAction({mutate: ['token', 'enable_sites', 'enable_clients']})
     async cleanToken() {
         return {
             token: '',
-            sites: [],
+            enable_sites: [],
             enable_clients: []
         }
     }
