@@ -145,7 +145,9 @@
           this.logId = logId
           this.startMissionProcessTimer()
           this.startBreathTimer()
-        }).then(() => {
+        }).catch(() => {
+          this.$notify.error('任务失败')
+        }).finally(() => {
           this.deepUpdateLog()
           this.cleanMissionProcessTimer()
           this.cleanBreathTimer()
