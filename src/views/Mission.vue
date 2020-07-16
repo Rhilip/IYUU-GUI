@@ -134,6 +134,10 @@
       },
 
       handlerReseedMissionDialogOpen() {
+        if (this.$store.state.IYUU.enable_sites.length === 0 || this.$store.state.IYUU.enable_clients.length === 0) {
+          this.$notify.error('请至少添加一个下载器和一个站点')
+          return
+        }
         this.dialogReseedVisible = true
       },
 
