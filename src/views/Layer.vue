@@ -28,7 +28,7 @@ export default {
 </style>
 
 <style>
-    .main-card {
+    .main-card:not(:last-of-type) {
         margin-bottom: 10px;
     }
 </style>

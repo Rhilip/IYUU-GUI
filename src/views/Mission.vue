@@ -7,14 +7,26 @@
             <div>
                 <el-row>
                     <el-col :span="4">
-                        <el-button type="warning"
+                        <el-button type="success"
                                    :disabled="missionState.processing"
                                    @click="test">
                             辅种任务
                         </el-button>
                     </el-col>
                     <el-col :span="20">
-                        为添加的下载器和站点进行批量辅种任务，你可以在点击后的设置对话框里进一步设置启用站点。
+                        为添加的下载器和站点进行批量辅种任务，你可以在点击后的设任务置对话框里进一步设置启用站点和下载服务器。
+                    </el-col>
+                </el-row>
+                <el-row style="margin-top: 10px">
+                    <el-col :span="4">
+                        <el-button type="warning"
+                                   :disabled="missionState.processing"
+                                   @click="test">
+                            转钟任务
+                        </el-button>
+                    </el-col>
+                    <el-col :span="20">
+                        // 还没完成
                     </el-col>
                 </el-row>
             </div>
@@ -32,7 +44,7 @@
             </div>
             <div>
                 <el-scrollbar>
-                    <div style="height: 330px">
+                    <div style="height: 295px">
                         <pre v-if="logId !== ''">{{ formatLogs(logs) }}</pre>
                     </div>
                 </el-scrollbar>

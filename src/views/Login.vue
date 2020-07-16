@@ -13,26 +13,33 @@
                             <el-input v-model="form.token" clearable focus maxlength="60"
                                       minlength="46" show-word-limit />
                         </el-form-item>
-                        <el-form-item v-if="need_co_site" label="合作站点" prop="site">
-                            <el-select v-model="form.site" placeholder="请选择">
-                                <el-option v-for="item in $store.getters['IYUU/coSites']"
-                                           :key="item"
-                                           :label="item"
-                                           :value="item" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item v-if="need_co_site" label="合作站点 用户id" prop="id">
-                            <el-input v-model="form.id" />
-                        </el-form-item>
-                        <el-form-item v-if="need_co_site" label="合作站点 用户Passkey" prop="passkey">
-                            <el-input v-model="form.passkey" />
-                        </el-form-item>
+                        <el-collapse-transition>
+                            <div v-show="need_co_site">
+                                <el-form-item label="合作站点" prop="site">
+                                    <el-select v-model="form.site" placeholder="请选择">
+                                        <el-option v-for="item in $store.getters['IYUU/coSites']"
+                                                   :key="item"
+                                                   :label="item"
+                                                   :value="item" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="合作站点 用户id" prop="id">
+                                    <el-input v-model="form.id" />
+                                </el-form-item>
+                                <el-form-item label="合作站点 用户Passkey" prop="passkey">
+                                    <el-input v-model="form.passkey" />
+                                </el-form-item>
+                            </div>
+                        </el-collapse-transition>
                         <el-form-item>
                             <el-button type="primary" @click="submitForm('form')">
                                 进入
                             </el-button>
                             <el-button @click="resetForm('form')">
                                 重置
+                            </el-button>
+                            <el-button type="text" class="extra_link" @click="shellOpen('https://iyuu.cn/')">
+                                点击注册 爱语飞飞Token <i class="el-icon-link" />
                             </el-button>
                         </el-form-item>
                     </el-form>

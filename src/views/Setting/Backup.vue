@@ -25,7 +25,24 @@
                         </el-button>
                     </el-form-item>
                 </el-form>
-</div>
+            </div>
+        </el-card>
+        <el-card class="main-card">
+            <div slot="header" class="clearfix">
+                <b>备份与还原</b>
+            </div>
+            <div>
+                <el-row>
+                    <el-col :span="24">
+                        导入/导出 IYUU-GUI 参数 （还没写）
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        导入/导出 PHP版 IYUUAutoReseed 参数 （还没写）
+                    </el-col>
+                </el-row>
+            </div>
         </el-card>
 </div>
 </template>

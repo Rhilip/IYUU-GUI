@@ -1,5 +1,6 @@
 <template>
     <div>
+        // 还没想好这里放什么参数设置
         <el-button type="warning"
                    @click="test">
             点击测试
