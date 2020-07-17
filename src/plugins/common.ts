@@ -19,3 +19,7 @@ export function formatLogs(logs: LogInfo[]) {
         .map(log => `${dayjs(log.timestamp).format('YYYY-MM-DD HH:mm:ss')} ${log.message}`)  // 对象整理成字符串
         .join('\n')  // 用 \n 分割
 }
+
+export function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, session } from 'electron'
+import { app, protocol, BrowserWindow, Tray, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import * as path from "path";
@@ -57,26 +57,30 @@ function createWindow() {
     win.loadURL('app://./index.html')
   }
 
+  let appIcon = new Tray(path.join(__static, 'assets/iyuu.png'))
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '退出', click: () => {
+        app.quit()
+      }
+    }
+  ])
+
+  appIcon.on('click', () => {
+    win && win.show();
+  })
+
+  // Call this again for Linux because we modified the context menu
+  appIcon.setContextMenu(contextMenu)
+
+  win.on('close', (e: Event) => {
+    e.preventDefault()
+    win && win.hide();
+  })
+
   win.on('closed', () => {
     win = null
   })
-}
-
-function configureSession() {
-  session.defaultSession.webRequest.onBeforeSendHeaders(
-      {
-        urls: ['*://*/*'],
-      },
-      (details, callback) => {
-        // @ts-ignore
-        details.requestHeaders.origin = null;
-        // @ts-ignore
-        details.requestHeaders.referer = null;
-        // eslint-disable-next-line prefer-destructuring
-        details.requestHeaders.Host = details.url.split('://')[1].split('/')[0]
-        callback({cancel: false, requestHeaders: details.requestHeaders});
-      },
-  );
 }
 
 // Quit when all windows are closed.
@@ -88,11 +92,15 @@ app.on('window-all-closed', () => {
   }
 })
 
+app.on('before-quit', () => {
+  win && win.removeAllListeners('close');
+  win && win.close();
+});
+
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (win === null) {
-    configureSession()
     createWindow()
   }
 })
