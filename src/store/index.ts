@@ -18,6 +18,9 @@ const initializer = (store: Store<any>) => initializeStores(store)
 export const plugins = [
     initializer,
     createPersistedState({
+        ignoredPaths: [
+            "Mission.logs", "Mission.currentMission"
+        ],
         ignoredCommits: [
             'Mission/appendLog',
             'Mission/updateCurrentMissionState'

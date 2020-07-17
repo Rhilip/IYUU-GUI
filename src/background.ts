@@ -9,6 +9,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null
+let tray: Tray | null
 
 // webSecurity is already disabled in BrowserWindow. However, it seems there is
 // a bug in Electron 9 https://github.com/electron/electron/issues/23664. There
@@ -57,21 +58,7 @@ function createWindow() {
     win.loadURL('app://./index.html')
   }
 
-  let appIcon = new Tray(path.join(__static, 'assets/iyuu.png'))
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: '退出', click: () => {
-        app.quit()
-      }
-    }
-  ])
-
-  appIcon.on('click', () => {
-    win && win.show();
-  })
-
-  // Call this again for Linux because we modified the context menu
-  appIcon.setContextMenu(contextMenu)
+  initTray()
 
   win.on('close', (e: Event) => {
     e.preventDefault()
@@ -80,7 +67,26 @@ function createWindow() {
 
   win.on('closed', () => {
     win = null
+    tray = null
   })
+}
+
+function initTray() {
+  tray = new Tray(path.join(__static, 'assets/iyuu.png'))
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '退出', click: () => {
+        app.quit()
+      }
+    }
+  ])
+
+  tray.on('click', () => {
+    win && win.show();
+  })
+
+  // Call this again for Linux because we modified the context menu
+  tray.setContextMenu(contextMenu)
 }
 
 // Quit when all windows are closed.
