@@ -7,7 +7,11 @@ module.exports = {
       builderOptions: {
         appId: "info.rhilip.iyuu",
         productName: 'IYUU GUI',
-        copyright: 'Copyright © 2020-2030 Rhilip'
+        copyright: 'Copyright © 2020-2030 Rhilip',
+
+        "nsis": {
+          "deleteAppDataOnUninstall": true
+        },
       },
 
       // refs: https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/683
