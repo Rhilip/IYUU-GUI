@@ -73,11 +73,8 @@ export default class Qbittorrent implements TorrentClient {
         })
     }
 
-    async addTorrent(urls: string, options: Partial<QbittorrentAddTorrentOptions> | undefined): Promise<boolean> {
+    async addTorrent(urls: string, options: Partial<QbittorrentAddTorrentOptions> = {}): Promise<boolean> {
         const formData = new FormData()
-
-        // 开始处理options
-        options = options || {};
 
         // 处理链接
         if (urls.startsWith('magnet:') || !options.localDownload) {

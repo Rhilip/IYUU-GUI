@@ -4,10 +4,11 @@ import {Notification} from 'element-ui'
 import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
 
 import {Site, EnableSite} from "@/interfaces/IYUU/Site";
-import {defaultQbittorrentConfig} from "@/plugins/btclient/qbittorrent";
-import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
-
 import {MissionStore} from '@/store/store-accessor' // circular import; OK though
+
+import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
+import {defaultQbittorrentConfig} from "@/plugins/btclient/qbittorrent";
+import {defaultTransmissionConfig} from "@/plugins/btclient/transmission";
 
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
@@ -34,7 +35,8 @@ export default class IYUU extends VuexModule {
     // 理由同上
     get supportClientType() {
         return {
-            'qbittorrent': defaultQbittorrentConfig
+            'qbittorrent': defaultQbittorrentConfig,
+            'transmission': defaultTransmissionConfig
         }
     }
 

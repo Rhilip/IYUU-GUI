@@ -79,6 +79,7 @@ export interface Torrent {
 }
 
 export interface TorrentFilterRules {
+    ids?: any;
     complete?: boolean;
 }
 
