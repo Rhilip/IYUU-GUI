@@ -10,7 +10,6 @@
             <el-form ref="form" :model="form" label-position="top">
                 <el-form-item label="下载服务器类型" prop="type">
                     <el-select v-model="form.type"
-                               default-first-option filterable
                                placeholder="请选择"
                                @change="handleClientTypeSelectChange">
                         <el-option
@@ -74,6 +73,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import factory from "../../../plugins/btclient/factory";
 
   export default {
@@ -110,6 +110,7 @@
     watch: {
       isVisible: function (newValue) {
         this.visible = newValue
+        this.cleanForm()
       }
     },
 
@@ -118,7 +119,7 @@
     },
 
     methods: {
-      cleanFrom() {
+      cleanForm() {
         this.disable_form = true
         this.form = {}
       },
@@ -128,7 +129,7 @@
       },
 
       handleClientTypeSelectChange(clientType) {
-        this.form = this.clients[clientType]
+        this.form = _.clone(this.clients[clientType])
         this.form.uuid = this.$uuid.v4()
         this.disable_form = false
       },
@@ -151,7 +152,7 @@
       },
 
       handleDialogBeforeClose(done) {
-        this.cleanFrom()
+        this.cleanForm()
         done()
       },
 
