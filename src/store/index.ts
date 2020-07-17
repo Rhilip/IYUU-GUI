@@ -18,7 +18,7 @@ const initializer = (store: Store<any>) => initializeStores(store)
 export const plugins = [
     initializer,
     createPersistedState({
-        blacklist: [
+        ignoredCommits: [
             'Mission/appendLog',
             'Mission/updateCurrentMissionState'
         ]

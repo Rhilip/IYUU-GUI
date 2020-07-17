@@ -9448,10 +9448,9 @@ vue@^2.6.11:
   resolved "https://registry.npm.taobao.org/vue/download/vue-2.6.11.tgz?cache=0&sync_timestamp=1594226819006&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue%2Fdownload%2Fvue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
   integrity sha1-dllNh31LEiNEBuhONSdcbVFBJcU=
 
-vuex-electron@^1.0.3:
+vuex-electron@MaverickMartyn/vuex-electron:
   version "1.0.3"
-  resolved "https://registry.npm.taobao.org/vuex-electron/download/vuex-electron-1.0.3.tgz#c8ce0fd06ed9d3beb8881bce39bf76c9fcdc5611"
-  integrity sha1-yM4P0G7Z0764iBvOOb92yfzcVhE=
+  resolved "https://codeload.github.com/MaverickMartyn/vuex-electron/tar.gz/e6051fa60eb602d7757d30e5d86f0a7bef8c6885"
   dependencies:
     deepmerge "^2.1.1"
     electron-store "^2.0.0"

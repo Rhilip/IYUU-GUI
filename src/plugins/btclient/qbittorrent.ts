@@ -64,7 +64,7 @@ export default class Qbittorrent implements TorrentClient {
 
         return await axios.request({
             method: method,
-            url: urljoin(this.config.address,'/api/v2', path),
+            url: urljoin(this.config.address, '/api/v2', path),
             params: params,
             data: data,
             headers: headers,
