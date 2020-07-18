@@ -38,7 +38,14 @@
                     <el-switch
                             v-model="form.options.dryRun"
                             active-color="#13ce66"
-                            active-text="空运行（只输出日志，并不发送种子到客户端）" />
+                            active-text="空运行（只输出日志，并不发送种子到客户端）"
+                            @change="disableAppCloseWhenDryRun" />
+                    <br>
+                    <el-switch
+                            v-model="form.options.closeAppAfterRun"
+                            active-color="#13ce66"
+                            :disabled="disableAppCloseAfterRun"
+                            active-text="任务运行完成自动退出软件" />
                     <br>
                 </el-form-item>
             </el-form>
@@ -73,10 +80,15 @@
           sites: allSites,
         },
 
+        disableAppCloseAfterRun: false,
+
         form: {
           clients: [],
           sites: [],
-          options: {}
+          options: {
+            dryRun: false,
+            closeAppAfterRun: false
+          }
         },
 
         formControl: {
@@ -135,7 +147,8 @@
           sites: this.all.sites,
           clients: this.all.clients,
           options: {
-            dryRun: false
+            dryRun: false,
+            closeAppAfterRun: false
           }
         }
       },
@@ -145,6 +158,16 @@
           sites: [],
           clients: [],
           options: {}
+        }
+      },
+
+      disableAppCloseWhenDryRun(newValue) {
+        console.log(newValue)
+        if (newValue) {
+          this.form.options.closeAppAfterRun = false
+          this.disableAppCloseAfterRun = true
+        } else {
+          this.disableAppCloseAfterRun = false
         }
       },
 

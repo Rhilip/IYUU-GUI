@@ -1,6 +1,7 @@
 // 转发使用的核心方法
 import UUID from 'uuid'
 import _ from 'lodash'
+import {ipcRenderer} from 'electron'
 
 import {EnableSite} from "@/interfaces/IYUU/Site";
 import {AddTorrentOptions, TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
@@ -16,6 +17,7 @@ export interface ReseedStartOption {
     dryRun: boolean
     label: string,
     weChatNotify: boolean,  // 是否将信息推送给微信
+    closeAppAfterRun: boolean
 }
 
 export default class Reseed {
@@ -70,14 +72,14 @@ export default class Reseed {
                     logger(`由于当前infoHash总数超过最大单次请求限制（设置值 ${IYUUStore.apiPreInfoHash}），程序将分成多次进行请求。`)
                 }
 
-                for (let j = 0; j < chunkUnReseedTorrents.length; j ++) {
+                for (let j = 0; j < chunkUnReseedTorrents.length; j++) {
                     const chunkUnReseedTorrent = chunkUnReseedTorrents[j]
                     // 将分片信息请求IYUU服务器
                     const resp = await iyuuEndpoint.apiHash(chunkUnReseedTorrent.map(t => t.infoHash))
                     logger(`在提交的 ${chunkUnReseedTorrent.length} 个infoHash值里， IYUU服务器共返回 ${resp.data.length} 个可辅种结果。`)
                     for (let k = 0; k < resp.data.length; k++) {
                         const reseedTorrentsDataFromIYUU = resp.data[k]
-                        const reseedTorrentDataFromClient = torrents.find(t=> t.infoHash === reseedTorrentsDataFromIYUU.hash)
+                        const reseedTorrentDataFromClient = torrents.find(t => t.infoHash === reseedTorrentsDataFromIYUU.hash)
 
                         // 筛选需要转发的种子
                         const canReseedTorrents = reseedTorrentsDataFromIYUU.torrent.filter(t => {
@@ -126,7 +128,7 @@ export default class Reseed {
 
                                 // 加重试版 推送种子链接（由本地btclient代码根据传入参数决定推送的是链接还是文件）
                                 let retryCount = 0;
-                                while (retryCount ++ < IYUUStore.maxRetry) {
+                                while (retryCount++ < IYUUStore.maxRetry) {
                                     const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
                                     if (addTorrentStatue) {
                                         logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 成功。`)
@@ -169,5 +171,11 @@ export default class Reseed {
             processing: false,
             logId: logId
         })
+
+        // 发送微信通知
+
+        if (options.closeAppAfterRun) {
+            ipcRenderer.send('close-me')
+        }
     }
 }

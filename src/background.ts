@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Tray, Menu } from 'electron'
+import { app, protocol, BrowserWindow, Tray, Menu, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import * as path from "path";
@@ -131,9 +131,9 @@ if (!gotTheLock) {
     callback(true)
   })
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
   app.on('ready', async () => {
     if (isDevelopment && !process.env.IS_TEST) {
       // Install Vue Devtools
@@ -144,6 +144,10 @@ if (!gotTheLock) {
       }
     }
     createWindow()
+  })
+
+  ipcMain.on('close-me', (evt, arg) => {
+    app.quit()
   })
 }
 
