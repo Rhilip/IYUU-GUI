@@ -15,7 +15,6 @@
                         <el-tooltip effect="dark" placement="top-start">
                             <template slot="content">
                                 本处列出IYUU目前所有支持且尚未添加站点。<br>
-                                <b>请特别注意：部分站点在使用前要求备案或验证。</b>
                             </template>
                             <i class="el-icon-info" />
                         </el-tooltip>
@@ -30,34 +29,26 @@
                                 :label="item.site"
                                 :value="item.site" />
                     </el-select>
+                    <div class="form-notice">
+                        <b>请特别注意：部分站点在使用前要求备案或验证。</b>
+                    </div>
                 </el-form-item>
-                <el-form-item prop="link">
-                    <template slot="label">
-                        下载链接构造模板
-                        <el-tooltip effect="dark" placement="top-start">
-                            <template slot="content">
-                                请注意：除部分站点外，本软件通过构造可以直接下载的种子链接发送给下载器。<br>
-                                请在此处直接写好下载链接构造式，但请特别注意：<b>软件不检测链接是否真实可用。</b><br>
-                                其中 {} 表示种子ID信息，请勿修改，已有模板中的 {passkey} 等信息请替换成自己信息。
-                            </template>
-                            <i class="el-icon-info" />
-                        </el-tooltip>
-                    </template>
+                <el-form-item label="下载链接构造模板" prop="link">
                     <el-input v-model="site_add_form.link" :disabled="disable_link" :placeholder="link_placeholder" />
+                    <div class="form-notice">
+                        除部分站点外，本软件通过构造可以直接下载的种子链接发送给下载器。（<b>不检测链接是否真实</b>）<br>
+                        请在此处直接写好下载链接构造式，例如：<br>
+                        <code>https://pt.example.com/download.php?id={}&passkey=abcdefgh2321234323</code><br>
+                        其中 {} 表示种子ID信息，请勿修改，已有模板中的 {passkey} 等信息请替换成自己信息。
+                    </div>
                 </el-form-item>
-                <el-form-item label="" prop="cookies">
-                    <template slot="label">
-                        站点 Cookies
-                        <el-tooltip effect="dark" placement="top-start">
-                            <template slot="content">
-                                除部分无法构造种子下载链接的站点外，只使用自动辅种功能，可以不配置站点Cookies信息。<br>
-                                软件同时支持 <code>{key}={value};格式</code> 以及 <code>EditCookies插件的导出格式。</code><br>
-                                但请特别注意：<b>软件仅验证是否符合格式但同样不检测Cookies是否真实可用。</b>
-                            </template>
-                            <i class="el-icon-info" />
-                        </el-tooltip>
-                    </template>
+                <el-form-item label="站点 Cookies" prop="cookies">
                     <el-input v-model="site_add_form.cookies" :autosize="{ minRows: 2}" type="textarea" />
+                    <div class="form-notice">
+                        除部分无法构造种子下载链接的站点外，只使用自动辅种功能，可以不配置站点Cookies信息。<br>
+                        软件同时支持 <code>{key}={value};格式</code> 以及 <code>EditCookies插件的导出格式。</code><br>
+                        但请特别注意：<b>软件仅验证是否符合格式但同样不检测Cookies是否真实可用。</b>
+                    </div>
                 </el-form-item>
             </el-form>
             <el-alert type="info" show-icon :closable="false">

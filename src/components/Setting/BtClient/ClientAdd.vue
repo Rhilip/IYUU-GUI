@@ -24,29 +24,17 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item prop="name">
-                    <template slot="label">
-                        服务器名称
-                        <el-tooltip effect="dark" placement="top-start">
-                            <template slot="content">
-                                取一个好听的名字，方便你以后认出它来
-                            </template>
-                            <i class="el-icon-info" />
-                        </el-tooltip>
-                    </template>
+                <el-form-item label="服务器名称" prop="name">
                     <el-input v-model="form.name" :disabled="disable_form" />
+                    <div class="form-notice">
+                    取一个好听的名字，方便你以后认出它来
+                    </div>
                 </el-form-item>
-                <el-form-item prop="address">
-                    <template slot="label">
-                        服务器地址
-                        <el-tooltip effect="dark" placement="top-start">
-                            <template slot="content">
-                                完整的服务器地址（含端口），如：http://192.168.1.1:5000/
-                            </template>
-                            <i class="el-icon-info" />
-                        </el-tooltip>
-                    </template>
+                <el-form-item label="服务器地址" prop="address">
                     <el-input v-model="form.address" :disabled="disable_form" />
+                    <div class="form-notice">
+                    完整的服务器地址（含端口），如：http://192.168.1.1:5000/
+                    </div>
                 </el-form-item>
                 <el-form-item v-if="form.hasOwnProperty('username')" label="登录用户名" prop="username">
                     <el-input v-model="form.username" :disabled="disable_form" />
