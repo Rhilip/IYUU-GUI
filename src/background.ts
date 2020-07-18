@@ -11,6 +11,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let win: BrowserWindow | null
 let tray: Tray | null
 
+const gotTheLock = app.requestSingleInstanceLock()
+
 // webSecurity is already disabled in BrowserWindow. However, it seems there is
 // a bug in Electron 9 https://github.com/electron/electron/issues/23664. There
 // is workaround suggested in the issue
@@ -89,48 +91,60 @@ function initTray() {
   tray.setContextMenu(contextMenu)
 }
 
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (win) {
+      if (win.isMinimized()) win.restore()
+      win.focus()
+    }
+  })
 
-app.on('before-quit', () => {
-  win && win.removeAllListeners('close');
-  win && win.close();
-});
+  // Quit when all windows are closed.
+  app.on('window-all-closed', () => {
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
 
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (win === null) {
-    createWindow()
-  }
-})
+  app.on('before-quit', () => {
+    win && win.removeAllListeners('close');
+    win && win.close();
+  });
 
-app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-  // Verification logic.
-  event.preventDefault()
-  callback(true)
-})
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (win === null) {
+      createWindow()
+    }
+  })
+
+  app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+    // Verification logic.
+    event.preventDefault()
+    callback(true)
+  })
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS_DEVTOOLS)
-    } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
+  app.on('ready', async () => {
+    if (isDevelopment && !process.env.IS_TEST) {
+      // Install Vue Devtools
+      try {
+        await installExtension(VUEJS_DEVTOOLS)
+      } catch (e) {
+        console.error('Vue Devtools failed to install:', e.toString())
+      }
     }
-  }
-  createWindow()
-})
+    createWindow()
+  })
+}
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
