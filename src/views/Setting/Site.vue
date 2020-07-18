@@ -24,7 +24,7 @@
                             label="Cookies"
                             prop="cookies"
                             align="center"
-                            width="70">
+                            width="80">
                         <template slot-scope="scope">
                             <i :class="scope.row.cookies ? 'el-icon-circle-check' : 'el-icon-circle-close'"
                                :style="'color: ' + (scope.row.cookies ? 'green' : 'red')" />
@@ -115,10 +115,8 @@ export default {
         return link
       } else {
         let breakPos = link.length
-        if (link.lastIndexOf('?') !== -1) {
-          breakPos = link.lastIndexOf('?') + 1
-        } else if (link.lastIndexOf('/') !== -1) {
-          breakPos = link.lastIndexOf('/') + 1
+        if (link.indexOf('/', 10)) {
+          breakPos = link.indexOf('/', 10) + 1
         }
 
         return link.slice(0, breakPos) + '*'.repeat(20)
