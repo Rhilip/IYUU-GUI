@@ -43,10 +43,14 @@
                     <el-input v-model="form.password" show-password :disabled="disable_form" />
                 </el-form-item>
                 <el-form-item label="连接超时时间" prop="timeout">
-                    <el-slider v-model="form.timeout"
-                               :format-tooltip="formatTimeoutTooltip"
-                               :marks="marks" :max="800e3" :min="5e3"
-                               :step="1000" :disabled="disable_form" />
+                    <el-row type="flex" justify="space-around">
+                        <el-col :span="22">
+                            <el-slider v-model="form.timeout"
+                                       :format-tooltip="formatTimeoutTooltip"
+                                       :marks="marks" :max="800e3" :min="5e3"
+                                       :step="1000" :disabled="disable_form" />
+                        </el-col>
+                    </el-row>
                 </el-form-item>
                 <el-form-item label="客户端ID（自动生成）" prop="uuid">
                     <el-input v-model="form.uuid" :disabled="true" />
