@@ -26,7 +26,7 @@
                             align="center" />
                     <el-table-column
                             label="Hash缓存"
-                            width="80"
+                            width="90"
                             align="center">
                         <template slot-scope="scope">
                             <span>{{ $store.getters['Mission/reseededByClientId'](scope.row.uuid).length }}</span>
