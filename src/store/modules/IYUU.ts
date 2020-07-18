@@ -18,6 +18,8 @@ export default class IYUU extends VuexModule {
     enable_sites: EnableSite[] = [] // 此处缓存用户已经添加了的站点信息
     enable_clients: TorrentClientConfig[] = [] // 此处缓存用户已经添加了的客户端信息
 
+    apiPreInfoHash: number = 2000 // 单次请求最大infohash数
+
     // 这个方法不用state，因为state会被持久化，而这个后续可能会增加站点
     get coSites() {
         return [
@@ -161,5 +163,10 @@ export default class IYUU extends VuexModule {
     async cleanEnableClients() {
         await MissionStore.cleanReseeded()
         return {enable_clients: []}
+    }
+
+    @Mutation
+    setApiPreInfoHash(num: number) {
+        this.apiPreInfoHash = num
     }
 }
