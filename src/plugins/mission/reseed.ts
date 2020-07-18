@@ -142,7 +142,7 @@ export default class Reseed {
                                             logger(`请考虑为下载器 ${client.config.name}(${client.config.type}) 手动下载添加，链接 ${torrentLink} 。`)
                                         } else {
                                             const sleepSecond = Math.min(30, Math.pow(2, retryCount))
-                                            logger(`等待 ${sleepSecond} 秒进行第 ${retryCount} 次重试`)
+                                            logger(`等待 ${sleepSecond} 秒进行第 ${retryCount} 次推送重试`)
                                             await sleep(sleepSecond * 1e3)
                                         }
                                     }

@@ -29,17 +29,15 @@
     data() {
       return {
         form: {
-            apiPreInfoHash: 2000
+          apiPreInfoHash: 2000,
+          maxRetry: 2
         }
       }
     },
 
-    create() {
+    mounted() {
       this.buildFormData()
     },
-
-
-
 
     methods: {
       // 从store中获取数据

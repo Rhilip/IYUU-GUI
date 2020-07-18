@@ -83,7 +83,9 @@
     mounted() {
       if (this.missionState.processing) {
         this.startAllTimer()
-      } else if (this.missionState.logId) {
+      }
+      if (this.missionState.logId) {
+        this.logId = this.missionState.logId
         this.deepUpdateLog()
       }
     },
