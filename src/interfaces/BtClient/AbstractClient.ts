@@ -9,10 +9,10 @@ export interface TorrentClient {
     getTorrentsBy: (filter: TorrentFilterRules) => Promise<Torrent[]>
     getTorrent: (id: any) => Promise<Torrent>;
 
-    addTorrent: (url: string, options?: Partial<AddTorrentOptions>) => Promise<any>;
-    pauseTorrent: (id: any) => Promise<any>;
-    resumeTorrent: (id: any) => Promise<any>;
-    removeTorrent: (id: any, removeData?: boolean) => Promise<any>;
+    addTorrent: (url: string, options?: Partial<AddTorrentOptions>) => Promise<boolean>;
+    pauseTorrent: (id: any) => Promise<boolean>;
+    resumeTorrent: (id: any) => Promise<boolean>;
+    removeTorrent: (id: any, removeData?: boolean) => Promise<boolean>;
 }
 
 export type clientType = 'qbittorrent' | 'transmission' | 'deluge' | 'rtorrent'

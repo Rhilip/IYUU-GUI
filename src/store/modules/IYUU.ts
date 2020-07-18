@@ -19,6 +19,7 @@ export default class IYUU extends VuexModule {
     enable_clients: TorrentClientConfig[] = [] // 此处缓存用户已经添加了的客户端信息
 
     apiPreInfoHash: number = 2000 // 单次请求最大infohash数
+    maxRetry: number = 2 // 下载推送尝试次数
 
     // 这个方法不用state，因为state会被持久化，而这个后续可能会增加站点
     get coSites() {
@@ -166,7 +167,11 @@ export default class IYUU extends VuexModule {
     }
 
     @Mutation
-    setApiPreInfoHash(num: number) {
-        this.apiPreInfoHash = num
+    updateNormalConfig(config: {
+        apiPreInfoHash: number,
+        maxRetry: number
+    }) {
+        this.apiPreInfoHash = config.apiPreInfoHash
+        this.maxRetry = config.maxRetry
     }
 }

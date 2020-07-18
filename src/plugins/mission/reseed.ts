@@ -10,6 +10,7 @@ import iyuuEndpoint from "@/plugins/iyuu";
 
 import {MissionStore, IYUUStore, StatueStore} from '@/store/store-accessor' // circular import; OK though
 import {TorrentInfo} from "@/interfaces/IYUU/Forms";
+import {sleep} from "@/plugins/common";
 
 export interface ReseedStartOption {
     dryRun: boolean
@@ -66,13 +67,14 @@ export default class Reseed {
 
                 const chunkUnReseedTorrents = _.chunk(unReseedTorrents, IYUUStore.apiPreInfoHash)
                 if (chunkUnReseedTorrents.length > 1) {
-                    logger(`由于当前infoHash总数超过设置（设置值 ${IYUUStore.apiPreInfoHash}），程序将分成多次进行请求`)
+                    logger(`由于当前infoHash总数超过最大单次请求限制（设置值 ${IYUUStore.apiPreInfoHash}），程序将分成多次进行请求。`)
                 }
 
                 for (let j = 0; j < chunkUnReseedTorrents.length; j ++) {
                     const chunkUnReseedTorrent = chunkUnReseedTorrents[j]
-                    // 请求IYUU服务器
+                    // 将分片信息请求IYUU服务器
                     const resp = await iyuuEndpoint.apiHash(chunkUnReseedTorrent.map(t => t.infoHash))
+                    logger(`在提交的 ${chunkUnReseedTorrent.length} 个infoHash值里， IYUU服务器共返回 ${resp.data.length} 个可辅种结果。`)
                     for (let k = 0; k < resp.data.length; k++) {
                         const reseedTorrentsDataFromIYUU = resp.data[k]
                         const reseedTorrentDataFromClient = torrents.find(t=> t.infoHash === reseedTorrentsDataFromIYUU.hash)
@@ -85,6 +87,7 @@ export default class Reseed {
 
                         logger(`种子 ${reseedTorrentsDataFromIYUU.hash}： IYUU 返回 ${reseedTorrentsDataFromIYUU.torrent.length} 个待选种子，其中可添加 ${canReseedTorrents.length} 个`)
 
+                        let partialFail = 0;  // 部分辅种 infohash 出现错误，此时不应添加原种子缓存
                         for (let l = 0; l < canReseedTorrents.length; l++) {
                             const reseedTorrent: TorrentInfo = canReseedTorrents[l]
 
@@ -121,18 +124,36 @@ export default class Reseed {
                                     downloadOptionsForThisTorrent.label = options.label
                                 }
 
-                                // 推送种子链接（由本地btclient代码根据传入参数决定推送的是链接还是文件）
-                                const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
-                                if (addTorrentStatue) {
-                                    logger(`添加种子 ${reseedTorrent.info_hash} 成功，来自站点 ${siteInfoForThisTorrent.site}。`)
-                                    StatueStore.torrentReseed()
-                                } else {
-                                    logger(`添加种子 ${reseedTorrent.info_hash} 失败，站点 ${siteInfoForThisTorrent.site}，请考虑手动下载添加，链接 ${torrentLink} 。`)
+                                // 加重试版 推送种子链接（由本地btclient代码根据传入参数决定推送的是链接还是文件）
+                                let retryCount = 0;
+                                while (retryCount ++ < IYUUStore.maxRetry) {
+                                    const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
+                                    if (addTorrentStatue) {
+                                        logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 成功。`)
+                                        StatueStore.torrentReseed()  // 增加辅种成功计数
+                                        MissionStore.appendReseeded({  // 将这个infoHash加入缓存中
+                                            clientId: client.config.uuid, infoHash: reseedTorrent.info_hash
+                                        })
+                                        break;  // 退出重试循环
+                                    } else {
+                                        partialFail++;
+                                        logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 失败。`)
+                                        if (retryCount === IYUUStore.maxRetry) {
+                                            logger(`请考虑为下载器 ${client.config.name}(${client.config.type}) 手动下载添加，链接 ${torrentLink} 。`)
+                                        } else {
+                                            const sleepSecond = Math.min(30, Math.pow(2, retryCount))
+                                            logger(`等待 ${sleepSecond} 秒进行第 ${retryCount} 次重试`)
+                                            await sleep(sleepSecond * 1e3)
+                                        }
+                                    }
                                 }
-                                MissionStore.appendReseeded({
-                                    clientId: client.config.uuid, infoHash: reseedTorrent.info_hash
-                                })
                             }
+                        }
+
+                        if (!options.dryRun && partialFail === 0) {
+                            MissionStore.appendReseeded({  // 将原种的infohash加入缓存
+                                clientId: client.config.uuid, infoHash: reseedTorrentsDataFromIYUU.hash
+                            })
                         }
                     }
                 }

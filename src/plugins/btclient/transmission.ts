@@ -7,6 +7,7 @@ import {
 import axios, {AxiosResponse} from 'axios'
 import urljoin from "url-join";
 import {
+    AddTorrentResponse,
     rawTorrent, TransmissionAddTorrentOptions,
     TransmissionBaseResponse,
     TransmissionRequestMethod,
@@ -62,16 +63,20 @@ export default class Transmission implements TorrentClient {
 
         options.paused = options.addAtPaused;
         delete options.addAtPaused
-
-        await this.request('torrent-add', options)
-        return true;
+        try {
+            const resp = await this.request('torrent-add', options)
+            const data: AddTorrentResponse = resp.data
+            return data.result === 'success'
+        } catch (e) {
+            return false
+        }
     }
 
     async getAllTorrents(): Promise<TransmissionTorrent[]> {
         return await this.getTorrentsBy({})
     }
 
-    async getTorrent(id: number): Promise<TransmissionTorrent> {
+    async getTorrent(id: number | string): Promise<TransmissionTorrent> {
         const torrents = await this.getTorrentsBy({
             ids: [id]
         })
