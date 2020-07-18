@@ -23,7 +23,7 @@ export const defaultTransmissionConfig: TransmissionTorrentClientConfig = {
     address: 'http://localhost:9091/transmission/rpc',
     username: '',
     password: '',
-    timeout: 60 * 1e3
+    timeout: 5 * 60 * 1e3
 };
 
 export default class Transmission implements TorrentClient {
