@@ -10,7 +10,7 @@
                 <el-divider />
                 <el-form :inline="true">
                     <el-form-item label="请选择配置项">
-                        <el-select v-model="cache_clean_key" placeholder="请选择" multiple collapse-tags>
+                        <el-select v-model="cache_clean_key" collapse-tags multiple placeholder="请选择">
                             <el-option
                                     v-for="item in cache_clean_keys"
                                     :key="item.key"
@@ -32,22 +32,43 @@
                 <b>备份与还原</b>
             </div>
             <div>
-                <el-row>
-                    <el-col :span="24">
-                        导入/导出 IYUU-GUI 参数 （还没写）
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24">
-                        导入/导出 PHP版 IYUUAutoReseed 参数 （还没写）
-                    </el-col>
-                </el-row>
+                <el-collapse :value="['1','2']">
+                    <el-collapse-item name="1" title="备份/还原 IYUU-GUI 参数 （还没写）">
+                        <el-row>
+                            <el-col :span="24">
+                                // TODO
+                            </el-col>
+                        </el-row>
+                    </el-collapse-item>
+                    <el-collapse-item name="2" title="IYUUAutoReseed 参数 导入">
+                        <el-row>
+                            <el-col :span="4">
+                                <el-upload
+                                        ref="upload"
+                                        :auto-upload="false"
+                                        :on-change="handlePHPConfigFileImport"
+                                        :show-file-list="false"
+                                        action="http://localhost/">
+                                    <el-button slot="trigger" type="primary">
+                                        <i class="el-icon-download" />
+                                        导入配置
+                                    </el-button>
+                                </el-upload>
+                            </el-col>
+                            <el-col :span="20">
+                                如果你使用过PHP版的IYUUAutoReseed，你可以传入config目录下的 <b>config.json</b> 或 <b>config.php</b> 文件。<br>
+                                特别注意：程序会自动覆盖你已配置当前的站点信息和下载器信息，请谨慎操作。
+                            </el-col>
+                        </el-row>
+                    </el-collapse-item>
+                </el-collapse>
             </div>
         </el-card>
-</div>
+    </div>
 </template>
 
 <script>
+import {IYUUAutoReseedBridge} from "../../plugins/backup";
 export default {
   name: 'Backup',
   data() {
@@ -94,6 +115,21 @@ export default {
           this.$notify.success(`清除配置项 ${label} 成功`)
         })
       }
+    },
+
+    handlePHPConfigFileImport(file) {
+      IYUUAutoReseedBridge.decodeFromFile(file.raw)
+        .then(config => {
+          this.$confirm('确定使用PHP版IYUUAutoReseed版配置覆盖当前下载器和站点配置？').then(() => {
+            const status = IYUUAutoReseedBridge.importFromJSON(config)
+            this.$notify.success(`已成功导入 ${status.site} 个站点以及 ${status.client} 个下载器配置，请再次检查对应面板相关信息是否正确。`)
+          }).catch(() => {
+            this.$notify.info('导入操作已取消。')
+          })
+        })
+        .catch(msg => {
+          this.$notify.error(msg)
+        })
     }
   }
 }

@@ -158,11 +158,11 @@
         this.dialogReseedVisible = true
       },
 
-      handlerReseedMission(reseedForm) {
+      async handlerReseedMission(reseedForm) {
         console.log(reseedForm)
         this.cleanMission()
 
-        ReseedMission.start(reseedForm.sites,reseedForm.clients, reseedForm.options, (logId) => {
+        ReseedMission.start(reseedForm.sites, reseedForm.clients, reseedForm.options, (logId) => {
           this.logId = logId
           this.startAllTimer()
         }).catch((e) => {

@@ -21,11 +21,8 @@ export interface EnableSite extends Site {
      * 下载频率限制，只允许一组
      */
     rate_limit: {
-        // 按周期
-        maxPerRequests: number,   // 每请求周期请求数
-        perMinute: number,   // 请求周期（分钟），但使用时需要转成 n*(60*1e3) perMilliseconds
-
         // 按总量
         maxRequests: number   // 单次运行推送总量
+        requestsDelay: number  // 两次下载间隔
     }
 }

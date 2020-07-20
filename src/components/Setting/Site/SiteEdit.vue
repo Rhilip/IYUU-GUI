@@ -25,30 +25,17 @@
                     <br>
                     下载频率限制（为0时不做限制）：<br>
                     <el-row type="flex" justify="space-around">
-                        <el-col :span="2">
-                            按周期
+                        <el-col :span="4">
+                            每次运行
                         </el-col>
-                        <el-col :span="11">
-                            请求数（每周期）
-                            <el-input-number v-model="form.rate_limit.maxPerRequests"
-                                             :disabled="form.rate_limit.maxRequests > 0"
-                                             :min="0" size="small" />
-                        </el-col>
-                        <el-col :span="11">
-                            请求周期（分钟）
-                            <el-input-number v-model="form.rate_limit.perMinute"
-                                             :disabled="form.rate_limit.maxRequests > 0"
-                                             :min="0" size="small" />
-                        </el-col>
-                    </el-row>
-                    <el-row type="flex" justify="space-around">
-                        <el-col :span="2">
-                            按总量
-                        </el-col>
-                        <el-col :span="22">
-                            请求数（每次运行）
+                        <el-col :span="10">
+                            请求数
                             <el-input-number v-model="form.rate_limit.maxRequests"
-                                             :disabled="form.rate_limit.maxPerRequests > 0 || form.rate_limit.perMinute > 0"
+                                             :min="0" size="small" />
+                        </el-col>
+                        <el-col :span="10">
+                            请求间隔
+                            <el-input-number v-model="form.rate_limit.requestsDelay"
                                              :min="0" size="small" />
                         </el-col>
                     </el-row>
@@ -86,9 +73,8 @@ export default {
       form: {
         download_torrent: false,
         rate_limit: {
-          maxPerRequests: 0,
-          perMinute: 0,
           maxRequests: 0,
+          requestsDelay: 0,
         }
       },
       rules: {
@@ -100,18 +86,6 @@ export default {
               callback(new Error('该站点不支持构造种子下载链接，但你又没有填入Cookies'))
             } else if (value !== '' && !Cookies.validCookies(value)) {
               callback(new Error('你填入的Cookies格式可能存在问题，请再次检查'))
-            }
-            callback()
-          },
-          trigger: 'blur'
-        },
-        rate_limit: {
-          validator: (rule, value, callback) => {
-            if (
-              (this.form.rate_limit.maxPerRequests > 0 && this.form.rate_limit.perMinute === 0) ||
-              (this.form.rate_limit.maxPerRequests === 0 && this.form.rate_limit.perMinute > 0)
-            ) {
-              callback(new Error('最多只允许启用一组下载频率限制规则，且相关值均大于0'))
             }
             callback()
           },
@@ -133,9 +107,8 @@ export default {
       this.form = _.merge({
         download_torrent: false,
         rate_limit: {
-          perMinute: 0,
-          maxPerRequests: 0,
           maxRequests: 0,
+          requestsDelay: 0,
         }
       }, this.info);
 

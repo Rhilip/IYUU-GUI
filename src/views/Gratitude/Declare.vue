@@ -211,10 +211,10 @@ export default {
           link: 'https://dayjs.gitee.io/zh-CN/'
         },
         {
-          name: 'cancelable-promise',
-          version: '3.1.1',
-          note: 'A simple cancelable promise',
-          link: 'https://github.com/alkemics/CancelablePromise#readme'
+          name: 'jsonar',
+          version: '1.8.0',
+          note: 'Convert JSON to PHP native Array.',
+          link: 'https://github.com/oknoorap/jsonar'
         },
 
         // ▲▲▲▲其他项目（直接相关的）请添加到此处以上▲▲▲▲
