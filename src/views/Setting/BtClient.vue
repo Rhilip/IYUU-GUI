@@ -3,7 +3,7 @@
         <el-card class="main-card">
             <div>
                 <el-table
-                        row-key="id"
+                        row-key="uuid"
                         :data="$store.getters['IYUU/signedBtClient']"
                         style="width: 100%">
                     <el-table-column

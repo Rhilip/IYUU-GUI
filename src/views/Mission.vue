@@ -162,14 +162,19 @@
         console.log(reseedForm)
         this.cleanMission()
 
-        ReseedMission.start(reseedForm.sites, reseedForm.clients, reseedForm.options, (logId) => {
-          this.logId = logId
-          this.startAllTimer()
-        }).catch((e) => {
-          this.$notify.error(`任务失败： ${e}`)
-        }).finally(() => {
-          this.cleanMissionFinish()
-        })
+        let reseedMission = new ReseedMission(reseedForm.sites, reseedForm.clients, reseedForm.options)
+        this.logId = reseedMission.logId
+
+        reseedMission.start()
+          .catch((e) => {
+            this.$notify.error(`任务失败： ${e}`)
+          })
+          .finally(() => {
+            this.cleanMissionFinish()
+          })
+
+        this.startAllTimer()
+
       },
 
       handlerTransferMission() {

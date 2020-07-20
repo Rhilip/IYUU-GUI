@@ -25,16 +25,16 @@
                     <br>
                     下载频率限制（为0时不做限制）：<br>
                     <el-row type="flex" justify="space-around">
-                        <el-col :span="4">
+                        <el-col :span="3">
                             每次运行
                         </el-col>
-                        <el-col :span="10">
+                        <el-col :span="9">
                             请求数
                             <el-input-number v-model="form.rate_limit.maxRequests"
                                              :min="0" size="small" />
                         </el-col>
-                        <el-col :span="10">
-                            请求间隔
+                        <el-col :span="12">
+                            请求间隔（秒）
                             <el-input-number v-model="form.rate_limit.requestsDelay"
                                              :min="0" size="small" />
                         </el-col>
