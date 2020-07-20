@@ -78,6 +78,25 @@ export default {
         }
       },
       rules: {
+        link: [
+          {type: 'url', trigger: 'blur'},
+          {
+            validator: (rule, value, callback) => {
+              if (value !== '') {
+                const unReplaceQuote = value.match(/({[^}]+?})/ig)
+                if (unReplaceQuote) {
+                  callback(new Error('你还有未做替换的字符串 ' + unReplaceQuote))
+                } else if (value.search('{}') === -1) {
+                  callback(new Error('链接中没有可被替换的 {}， 请至少保留一个'))
+                }
+              } else if (this.site_add_form.cookies === '') {
+                callback(new Error('你必须填入链接或者Cookies中的一个'))
+              }
+              callback()
+            },
+            trigger: 'blur'
+          }
+        ],
         cookies: {
           validator: (rule, value, callback) => {
             if (this.form.download_torrent && value === '') {
