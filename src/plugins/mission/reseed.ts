@@ -129,7 +129,7 @@ export default class Reseed {
                 const chunkUnReseedTorrent = chunkUnReseedTorrents[i]
                 // 将分片信息请求IYUU服务器
                 const resp = await iyuuEndpoint.apiHash(chunkUnReseedTorrent.map(t => t.infoHash))
-                this.logger(`在提交的 ${chunkUnReseedTorrent.length} 个infoHash值里， IYUU服务器共返回 ${resp.data.length} 个可辅种结果。`)
+                this.logger(`在提交的 ${chunkUnReseedTorrent.length} 个infoHash值里， IYUU服务器共返回 ${resp.data.length || 0} 个可辅种结果。`)
                 for (let j = 0; j < resp.data.length; j++) {
                     const reseedTorrentsDataFromIYUU = resp.data[j]
                     const reseedTorrentDataFromClient = torrents.find(t => t.infoHash === reseedTorrentsDataFromIYUU.hash)
