@@ -22,6 +22,8 @@ export interface ReseedStartOption {
     closeAppAfterRun: boolean
 }
 
+class RateLimitError extends Error {}
+
 export default class Reseed {
     // 传入参数
     private readonly sites: EnableSite[];
@@ -89,7 +91,12 @@ export default class Reseed {
 
         // 开始遍历下载器
         for (let i = 0; i < this.clients.length; i++) {
-            await this.loopClient(this.clients[i])
+            try {
+                await this.loopClient(this.clients[i])
+            } catch (e) {
+                this.logger(`下载器 ${this.clients[i].name}(${this.clients[i].type}) 处理错误： ${e}`)
+            }
+
         }
 
         this.missionEnd()
@@ -155,55 +162,9 @@ export default class Reseed {
                             }
 
                             // 检查是否触及到站点流控规则
-                            if (siteInfoForThisTorrent.rate_limit) {
-                                const siteRateLimitRule = siteInfoForThisTorrent.rate_limit
-
-                                // 建立字典
-                                if (!(siteInfoForThisTorrent.site in this.rateLimitSites)) {
-                                    this.rateLimitSites[siteInfoForThisTorrent.site] = {
-                                        last_hit_timestamp: 0,
-                                        total_count: 0
-                                    }
-                                }
-
-                                // 检查该站点是否达到最大下载
-                                if (siteRateLimitRule.maxRequests > 0) {
-                                    if (this.rateLimitSites[siteInfoForThisTorrent.site].total_count > siteRateLimitRule.maxRequests) {
-                                        this.logger(`站点 ${siteInfoForThisTorrent.site} 触及到推送限制规则： 单次运行最多推送 ${siteRateLimitRule.maxRequests} 个种子。本次运行不再推送该站点。`)
-                                        const siteOrderId = this.siteIds.findIndex(i => i === siteInfoForThisTorrent.id)
-                                        console.log(this.siteIds, siteOrderId)
-                                        this.siteIds.splice(siteOrderId, 1)
-                                        console.log(this.siteIds)
-                                        partialFail++;
-                                        continue
-                                    } else {
-                                        this.rateLimitSites[siteInfoForThisTorrent.site].total_count++
-                                    }
-                                }
-
-                                if (siteRateLimitRule.requestsDelay > 0) {
-                                    const waitTime = siteRateLimitRule.requestsDelay * 1e3
-                                    const dateNow = Date.now()
-                                    // 计算剩余等待时间，并等待
-                                    const elapseTime = dateNow - (waitTime + this.rateLimitSites[siteInfoForThisTorrent.site].last_hit_timestamp)
-                                    if (elapseTime > 0) {
-                                        this.logger(`站点 ${siteInfoForThisTorrent.site} 通过推送间隔检查，上次推送时间 ${dayjs(this.rateLimitSites[siteInfoForThisTorrent.site].last_hit_timestamp).format('YYYY-MM-DD HH:mm:ss')}，间隔 ${elapseTime / 1e3} 秒。`)
-                                    } else {
-                                        this.logger(`站点 ${siteInfoForThisTorrent.site} 触及到推送限制规则： 连续两次推送间隔 ${siteRateLimitRule.requestsDelay} 秒。等待 ${-elapseTime / 1e3}秒后重试。`)
-                                        await sleep(-elapseTime)
-                                    }
-
-                                    this.rateLimitSites[siteInfoForThisTorrent.site].last_hit_timestamp = Date.now()
-                                }
-
-                            }
-
-                            // 使用工厂函数方法，构造种子真实下载链接
-                            let torrentLink;
                             try {
-                                torrentLink = await downloadFactory(reseedTorrent, siteInfoForThisTorrent)
+                                await this.siteRateLimitCheck(siteInfoForThisTorrent)
                             } catch (e) {
-                                this.logger(`种子下载链接构造失败， 站点 ${siteInfoForThisTorrent.site} 种子id： ${reseedTorrent.sid}。`)
                                 continue
                             }
 
@@ -214,33 +175,41 @@ export default class Reseed {
                             }
 
                             /* TODO 设置标签
-                            if (this.options.label) {
-                                downloadOptionsForThisTorrent.label = this.options.label
-                            }
+                             * if (this.options.label) {
+                             *     downloadOptionsForThisTorrent.label = this.options.label
+                             * }
                              */
 
-                            // 加重试版 推送种子链接（由本地btclient代码根据传入参数决定推送的是链接还是文件）
-                            let retryCount = 0;
-                            while (retryCount++ < IYUUStore.maxRetry) {
-                                const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
-                                if (addTorrentStatue) {
-                                    this.logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 成功。`)
-                                    StatueStore.torrentReseed()  // 增加辅种成功计数
-                                    MissionStore.appendReseeded({  // 将这个infoHash加入缓存中
-                                        clientId: client.config.uuid, infoHash: reseedTorrent.info_hash
-                                    })
-                                    break;  // 退出重试循环
-                                } else {
-                                    partialFail++;
-                                    this.logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 失败。`)
-                                    if (retryCount === IYUUStore.maxRetry) {
-                                        this.logger(`请考虑为下载器 ${client.config.name}(${client.config.type}) 手动下载添加，链接 ${torrentLink} 。`)
+                            try {
+                                // 使用工厂函数方法，构造种子真实下载链接
+                                let torrentLink = await downloadFactory(reseedTorrent, siteInfoForThisTorrent)
+
+                                // 加重试版 推送种子链接（由本地btclient代码根据传入参数决定推送的是链接还是文件）
+                                let retryCount = 0;
+                                while (retryCount++ < IYUUStore.maxRetry) {
+                                    console.log(torrentLink)
+                                    const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
+                                    if (addTorrentStatue) {
+                                        this.logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 成功。`)
+                                        StatueStore.torrentReseed()  // 增加辅种成功计数
+                                        MissionStore.appendReseeded({  // 将这个infoHash加入缓存中
+                                            clientId: client.config.uuid, infoHash: reseedTorrent.info_hash
+                                        })
+                                        break;  // 退出重试循环
                                     } else {
-                                        const sleepSecond = Math.min(30, Math.pow(2, retryCount))
-                                        this.logger(`等待 ${sleepSecond} 秒进行第 ${retryCount} 次推送重试`)
-                                        await sleep(sleepSecond * 1e3)
+                                        partialFail++;
+                                        this.logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 失败。`)
+                                        if (retryCount === IYUUStore.maxRetry) {
+                                            this.logger(`请考虑为下载器 ${client.config.name}(${client.config.type}) 手动下载添加，链接 ${torrentLink} 。`)
+                                        } else {
+                                            const sleepSecond = Math.min(30, Math.pow(2, retryCount))
+                                            this.logger(`等待 ${sleepSecond} 秒进行第 ${retryCount} 次推送重试`)
+                                            await sleep(sleepSecond * 1e3)
+                                        }
                                     }
                                 }
+                            } catch (e) {
+                                this.logger(`种子下载链接构造失败， 站点 ${siteInfoForThisTorrent.site} 种子id： ${reseedTorrent.sid}。原因： ${e}`)
                             }
                         }
                     }
@@ -259,6 +228,44 @@ export default class Reseed {
             // TODO
         } else {
             this.logger(`下载器 ${client.config.name}(${client.config.type}) 连接失败`)
+        }
+    }
+
+    private async siteRateLimitCheck(site: EnableSite) {
+        const siteRateLimitRule = site.rate_limit
+        // 建立字典
+        if (!(site.site in this.rateLimitSites)) {
+            this.rateLimitSites[site.site] = {
+                last_hit_timestamp: 0,
+                total_count: 0
+            }
+        }
+
+        // 检查该站点是否达到最大下载
+        if (siteRateLimitRule.maxRequests > 0) {
+            if (this.rateLimitSites[site.site].total_count > siteRateLimitRule.maxRequests) {
+                this.logger(`站点 ${site.site} 触及到推送限制规则： 单次运行最多推送 ${siteRateLimitRule.maxRequests} 个种子。本次运行不再推送该站点。`)
+                const siteOrderId = this.siteIds.findIndex(i => i === site.id)
+                this.siteIds.splice(siteOrderId, 1)
+                throw new RateLimitError(`站点 ${site.site} 触及到推送限制规则`)
+            } else {
+                this.rateLimitSites[site.site].total_count++
+            }
+        }
+
+        if (siteRateLimitRule.requestsDelay > 0) {
+            const waitTime = siteRateLimitRule.requestsDelay * 1e3
+            const dateNow = Date.now()
+            // 计算剩余等待时间，并等待
+            const elapseTime = dateNow - (waitTime + this.rateLimitSites[site.site].last_hit_timestamp)
+            if (elapseTime > 0) {
+                this.logger(`站点 ${site.site} 通过推送间隔检查，上次推送时间 ${dayjs(this.rateLimitSites[site.site].last_hit_timestamp).format('YYYY-MM-DD HH:mm:ss')}，间隔 ${elapseTime / 1e3} 秒。`)
+            } else {
+                this.logger(`站点 ${site.site} 触及到推送限制规则： 连续两次推送间隔 ${siteRateLimitRule.requestsDelay} 秒。等待 ${-elapseTime / 1e3}秒后重试。`)
+                await sleep(-elapseTime)
+            }
+
+            this.rateLimitSites[site.site].last_hit_timestamp = Date.now()
         }
     }
 }

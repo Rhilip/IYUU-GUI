@@ -29,7 +29,6 @@
 
 <script>
 import Normal from "../../components/Setting/Other/Normal";
-import Cookies from "@/plugins/cookies";
 export default {
   name: 'Other',
   components: {Normal},
@@ -40,9 +39,6 @@ export default {
   },
   methods: {
     async test() {
-      console.log(await Cookies.getCookies({
-        domain: 'ob.rhilip.info'
-      }))
     }
 
   }

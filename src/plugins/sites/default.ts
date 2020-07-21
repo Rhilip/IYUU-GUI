@@ -4,6 +4,9 @@ import {EnableSite} from "@/interfaces/IYUU/Site";
 import Cookies from "@/plugins/cookies";
 import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 
+export class CookiesExpiredError extends Error {}
+export class TorrentNotExistError extends Error {}
+export class TorrentNotValidError extends Error {}
 
 export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
     // 将种子连接模板中剩下的{} 替换成 IYUU给出的种子id

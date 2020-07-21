@@ -159,7 +159,6 @@
       },
 
       async handlerReseedMission(reseedForm) {
-        console.log(reseedForm)
         this.cleanMission()
 
         let reseedMission = new ReseedMission(reseedForm.sites, reseedForm.clients, reseedForm.options)
@@ -174,7 +173,6 @@
           })
 
         this.startAllTimer()
-
       },
 
       handlerTransferMission() {
