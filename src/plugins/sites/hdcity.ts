@@ -11,11 +11,14 @@ import iyuuEndpoint from "@/plugins/iyuu";
 import {CookiesExpiredError, TorrentNotExistError} from "@/plugins/sites/default";
 
 let cuhash: string | null = null;
+let lastCheck: number = 0;
 
 export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
-
     const baseUrl = (site.is_https > 0 ? 'https://' : 'http://') + site.base_url
-    if (typeof cuhash !== 'string') {
+
+    const dateNow = Date.now()
+    const elapseTime = dateNow - (600 * 1e3 + lastCheck)
+    if (typeof cuhash !== 'string' || elapseTime < 0) {
         // 设置站点Cookies
         await Cookies.setCookiesBySite(site)
         const detailsUrl = urljoin(baseUrl, `t-${reseedInfo.torrent_id}`)
@@ -39,6 +42,8 @@ export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
         if (tmpCuhash) {
             cuhash = tmpCuhash
         }
+
+        lastCheck = Date.now()
     }
 
     if (cuhash) {

@@ -14,6 +14,7 @@ import {MissionStore, IYUUStore, StatueStore} from '@/store/store-accessor' // c
 import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 import {sleep} from "@/plugins/common";
 import dayjs from "dayjs";
+import {CookiesExpiredError, TorrentNotExistError} from "@/plugins/sites/default";
 
 export interface ReseedStartOption {
     dryRun: boolean
@@ -187,7 +188,6 @@ export default class Reseed {
                                 // 加重试版 推送种子链接（由本地btclient代码根据传入参数决定推送的是链接还是文件）
                                 let retryCount = 0;
                                 while (retryCount++ < IYUUStore.maxRetry) {
-                                    console.log(torrentLink)
                                     const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
                                     if (addTorrentStatue) {
                                         this.logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 成功。`)
@@ -210,6 +210,15 @@ export default class Reseed {
                                 }
                             } catch (e) {
                                 this.logger(`种子下载链接构造失败， 站点 ${siteInfoForThisTorrent.site} 种子id： ${reseedTorrent.sid}。原因： ${e}`)
+
+                                // Cookies过期
+                                if (e instanceof CookiesExpiredError) {
+                                    this.tempRemoveSite(siteInfoForThisTorrent, `${e}`)
+                                }
+
+                                if (!(e instanceof TorrentNotExistError)) {
+                                    partialFail++;
+                                }
                             }
                         }
                     }
@@ -231,6 +240,13 @@ export default class Reseed {
         }
     }
 
+    private tempRemoveSite(site: EnableSite, reason: string = '') {
+        this.logger(`本次运行不再推送站点 ${site.site}， 原因 ： "${reason}"。`)
+        const siteOrderId = this.siteIds.findIndex(i => i === site.id)
+        this.siteIds.splice(siteOrderId, 1)
+    }
+
+
     private async siteRateLimitCheck(site: EnableSite) {
         const siteRateLimitRule = site.rate_limit
         // 建立字典
@@ -244,9 +260,7 @@ export default class Reseed {
         // 检查该站点是否达到最大下载
         if (siteRateLimitRule.maxRequests > 0) {
             if (this.rateLimitSites[site.site].total_count > siteRateLimitRule.maxRequests) {
-                this.logger(`站点 ${site.site} 触及到推送限制规则： 单次运行最多推送 ${siteRateLimitRule.maxRequests} 个种子。本次运行不再推送该站点。`)
-                const siteOrderId = this.siteIds.findIndex(i => i === site.id)
-                this.siteIds.splice(siteOrderId, 1)
+                this.tempRemoveSite(site, `触及到推送限制规则： 单次运行最多推送 ${siteRateLimitRule.maxRequests} 个种子`)
                 throw new RateLimitError(`站点 ${site.site} 触及到推送限制规则`)
             } else {
                 this.rateLimitSites[site.site].total_count++

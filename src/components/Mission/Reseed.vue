@@ -162,12 +162,9 @@
       },
 
       disableAppCloseWhenDryRun(newValue) {
-        console.log(newValue)
+        this.disableAppCloseAfterRun = newValue
         if (newValue) {
           this.form.options.closeAppAfterRun = false
-          this.disableAppCloseAfterRun = true
-        } else {
-          this.disableAppCloseAfterRun = false
         }
       },
 
