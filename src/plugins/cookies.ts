@@ -1,9 +1,12 @@
 import _ from 'lodash'
 import cookieParser from 'cookie'
-import {session} from 'electron'
+import {remote} from 'electron'
+import {EnableSite} from "@/interfaces/IYUU/Site";
+
+const session = remote.session
 
 export default class Cookies {
-    private static editCookiesKeys : string[] = [
+    private static editCookiesKeys: string[] = [
         "domain", "expirationDate", "httpOnly", "name", "path",
         "sameSite", "secure", "session", "storeId", "value", "id"
     ]
@@ -27,7 +30,7 @@ export default class Cookies {
             }
         } else {
             // 不然，我们认为是 {key}={value}; 形式，直接使用 cookieParser
-            return  cookieParser.parse(raw)
+            return cookieParser.parse(raw)
         }
     }
 
@@ -42,19 +45,19 @@ export default class Cookies {
 
     // 对 Electron 的 Cookies 对象 wrapper
     static async getCookies(filter: Electron.CookiesGetFilter): Promise<Electron.Cookie[]> {
-        return session.defaultSession.cookies.get(filter)
+        return await session.defaultSession.cookies.get(filter)
     }
 
     static async setCookie(cookie: Electron.CookiesSetDetails): Promise<void> {
-        return session.defaultSession.cookies.set(cookie)
+        return await session.defaultSession.cookies.set(cookie)
     }
 
     static async removeCookie(url: string, name: string): Promise<void> {
-        return session.defaultSession.cookies.remove(url, name)
+        return await session.defaultSession.cookies.remove(url, name)
     }
 
     // 在wrapper基础上扩展
-    static async setCookiesByUrlAndCookiejar(url:string, cookiejar: { [key: string]: string }): Promise<void> {
+    static async setCookiesByUrlAndCookiejar(url: string, cookiejar: { [key: string]: string }): Promise<void> {
         for (const [key, value] of Object.entries(cookiejar)) {
             await this.setCookie({
                 url: url,
@@ -64,4 +67,10 @@ export default class Cookies {
         }
     }
 
+    static async setCookiesBySite(site: EnableSite) {
+        await this.setCookiesByUrlAndCookiejar(
+            (site.is_https > 0 ? 'https://' : 'http://') + site.base_url + '/',
+            this.parseCookies(site.cookies)
+        )
+    }
 }

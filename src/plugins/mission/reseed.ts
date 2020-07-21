@@ -6,6 +6,7 @@ import {ipcRenderer} from 'electron'
 import {EnableSite} from "@/interfaces/IYUU/Site";
 import {AddTorrentOptions, TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
 import btClientFactory from "@/plugins/btclient/factory";
+import downloadFactory from '@/plugins/sites/factory';
 
 import iyuuEndpoint from "@/plugins/iyuu";
 
@@ -148,15 +149,8 @@ export default class Reseed {
 
                         const siteInfoForThisTorrent = this.sites.find(s => s.id === reseedTorrent.sid)
                         if (siteInfoForThisTorrent && reseedTorrentDataFromClient) {  // 因为ts限制，这里要加一层判断（但实际并没有必要）
-                            // 将种子连接模板中剩下的{} 替换成 IYUU给出的种子id
-                            let torrentLink = siteInfoForThisTorrent.link.replace(/{}/ig, String(reseedTorrent.torrent_id))
-
                             if (this.options.dryRun) {
-                                if (IYUUStore.isForceDownloadSite(siteInfoForThisTorrent.site)) {
-                                    this.logger(`将会解析 ${siteInfoForThisTorrent.site} 页面，并获取 种子号为 ${reseedTorrent.torrent_id} 的下载链接，再推送到下载器`)
-                                } else {
-                                    this.logger(`将会推送 下载链接 ${torrentLink} 到下载器`)
-                                }
+                                this.logger(`将会推送 站点 ${siteInfoForThisTorrent.site}，id为 ${reseedTorrent.torrent_id} 的 种子链接/种子文件 到下载器 ${client.config.name}(${client.config.type})。`)
                                 continue;
                             }
 
@@ -204,10 +198,12 @@ export default class Reseed {
 
                             }
 
-                            // TODO 如果是特殊站点，则弃用模板生成的下载链接，改成使用自建逻辑进行操作
-                            if (IYUUStore.isForceDownloadSite(siteInfoForThisTorrent.site)) {
-                                torrentLink = ''
-                                this.logger(`暂不支持该站点`)  // FIXME
+                            // 使用工厂函数方法，构造种子真实下载链接
+                            let torrentLink;
+                            try {
+                                torrentLink = await downloadFactory(reseedTorrent, siteInfoForThisTorrent)
+                            } catch (e) {
+                                this.logger(`种子下载链接构造失败， 站点 ${siteInfoForThisTorrent.site} 种子id： ${reseedTorrent.sid}。`)
                                 continue
                             }
 
@@ -217,9 +213,11 @@ export default class Reseed {
                                 localDownload: siteInfoForThisTorrent.download_torrent
                             }
 
+                            /* TODO 设置标签
                             if (this.options.label) {
                                 downloadOptionsForThisTorrent.label = this.options.label
                             }
+                             */
 
                             // 加重试版 推送种子链接（由本地btclient代码根据传入参数决定推送的是链接还是文件）
                             let retryCount = 0;
