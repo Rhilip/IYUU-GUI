@@ -9,6 +9,7 @@ import {MissionStore} from '@/store/store-accessor' // circular import; OK thoug
 import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
 import {defaultQbittorrentConfig} from "@/plugins/btclient/qbittorrent";
 import {defaultTransmissionConfig} from "@/plugins/btclient/transmission";
+import {defaultDelugeConfig} from "@/plugins/btclient/deluge";
 
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
@@ -39,7 +40,8 @@ export default class IYUU extends VuexModule {
     get supportClientType() {
         return {
             'qbittorrent': defaultQbittorrentConfig,
-            'transmission': defaultTransmissionConfig
+            'transmission': defaultTransmissionConfig,
+            'deluge': defaultDelugeConfig
         }
     }
 

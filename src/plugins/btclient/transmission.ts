@@ -29,12 +29,21 @@ export const defaultTransmissionConfig: TransmissionTorrentClientConfig = {
 
 export default class Transmission implements TorrentClient {
     config: TorrentClientConfig;
-    authHeader: string;
+    private readonly address: string;
+    private readonly authHeader: string;
 
-    sessionId : string = '';
+    private sessionId : string = '';
 
     constructor(options: Partial<TransmissionTorrentClientConfig> = {}) {
         this.config = {...defaultTransmissionConfig, ...options}
+
+        // 修正服务器地址
+        let address = this.config.address;
+        if (address.indexOf('rpc') === -1) {
+            address = urljoin(address, '/transmission/rpc')
+        }
+        this.address = address
+
         this.authHeader =  'Basic ' + new Buffer(
             this.config.username + (this.config.password ? ':' + this.config.password : '')
         ).toString('base64');  // 直接在constructor的时候生成，防止后续使用时多次生成
@@ -152,14 +161,8 @@ export default class Transmission implements TorrentClient {
     }
 
     async request(method:TransmissionRequestMethod, args: any = {}): Promise<AxiosResponse> {
-        // 修正服务器地址
-        let address = this.config.address;
-        if (address.indexOf('rpc') === -1) {
-            address = urljoin(address, '/transmission/rpc')
-        }
-
         try {
-            return await axios.post(address, {
+            return await axios.post(this.address, {
                 method: method,
                 arguments: args,
             }, {
