@@ -1,10 +1,11 @@
-// TODO 工厂函数
+// 种子下载链接构造 工厂函数
 
 import {EnableSite} from "@/interfaces/IYUU/Site";
+import {TorrentInfo} from "@/interfaces/IYUU/Forms";
+
 import defaultSiteDownload from '@/plugins/sites/default'
 import HdChinaDownload from '@/plugins/sites/hdchina'
 import HDCityDownload from '@/plugins/sites/hdcity'
-import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 
 export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
     switch (site.site) {
