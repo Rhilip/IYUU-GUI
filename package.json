@@ -1,6 +1,6 @@
 {
   "name": "iyuu",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "Rhilip",
   "description": "Another Reseed Tools (GUI) powered by IYUU api",
   "private": true,
@@ -23,7 +23,6 @@
     "file-saver": "^2.0.2",
     "jsonar": "^1.8.0",
     "lodash": "^4.17.15",
-    "string.prototype.replaceall": "^1.0.3",
     "url-join": "^4.0.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
