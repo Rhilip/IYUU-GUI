@@ -66,14 +66,14 @@
                              person-type-note="原型开发"
                              tag-type="warning"
                              icon-class="el-icon-magic-stick" />
+                <ShowPersons :persons="thanksData.testers"
+                             person-type-note="内测成员"
+                             tag-type="info"
+                             icon-class="el-icon-mouse" />
                 <ShowPersons :persons="thanksData.operators"
                              person-type-note="后期维护"
                              tag-type=""
                              icon-class="el-icon-brush" />
-                <ShowPersons :persons="thanksData.testers"
-                             person-type-note="各种测试"
-                             tag-type="info"
-                             icon-class="el-icon-mouse" />
             </div>
         </el-card>
         <el-card class="main-card">
@@ -145,6 +145,7 @@ export default {
 
         // 测试阶段成员
         testers: [
+          'Throne', '路在脚下', '樊夫', 'ice羽毛', '再见', 'al6', 'delete', '诗书琴画'
         ]
       },
 
