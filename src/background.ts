@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import * as path from "path";
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const packageInfo = require('../package.json')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -31,6 +32,9 @@ function createWindow() {
     width: 1000,
     height: 700,
     icon: path.join(__static, 'assets/iyuu.png'),
+
+    title: `IYUU GUI v${packageInfo.version}`,
+
     useContentSize: true,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
