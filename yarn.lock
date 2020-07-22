@@ -8543,17 +8543,6 @@ string-width@^4.0.0, string-width@^4.1.0, string-width@^4.2.0:
     is-fullwidth-code-point "^3.0.0"
     strip-ansi "^6.0.0"
 
-string.prototype.replaceall@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npm.taobao.org/string.prototype.replaceall/download/string.prototype.replaceall-1.0.3.tgz#f7839a016a290b60769138f4d4938238cbb5a809"
-  integrity sha1-94OaAWopC2B2kTj01JOCOMu1qAk=
-  dependencies:
-    define-properties "^1.1.3"
-    es-abstract "^1.17.0-next.1"
-    function-bind "^1.1.1"
-    has-symbols "^1.0.1"
-    is-regex "^1.0.4"
-
 string.prototype.trimend@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/string.prototype.trimend/download/string.prototype.trimend-1.0.1.tgz#85812a6b847ac002270f5808146064c995fb6913"
