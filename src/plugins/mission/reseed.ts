@@ -1,20 +1,21 @@
 // 转发使用的核心方法
 import UUID from 'uuid'
 import _ from 'lodash'
+import dayjs from "dayjs";
 import {ipcRenderer} from 'electron'
 
 import {EnableSite} from "@/interfaces/IYUU/Site";
-import {AddTorrentOptions, TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
-import btClientFactory from "@/plugins/btclient/factory";
-import downloadFactory from '@/plugins/sites/factory';
-
-import iyuuEndpoint from "@/plugins/iyuu";
-
-import {MissionStore, IYUUStore, StatusStore} from '@/store/store-accessor' // circular import; OK though
 import {TorrentInfo} from "@/interfaces/IYUU/Forms";
-import {sleep} from "@/plugins/common";
-import dayjs from "dayjs";
+import {AddTorrentOptions, TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
+
+import {formatLogs, sleep} from "@/plugins/common";
+import iyuuEndpoint from "@/plugins/iyuu";
+import downloadFactory from '@/plugins/sites/factory';
+import btClientFactory from "@/plugins/btclient/factory";
+import {MissionStore, IYUUStore, StatusStore} from '@/store/store-accessor' // circular import; OK though
 import {CookiesExpiredError, TorrentNotExistError} from "@/plugins/sites/default";
+
+const packageInfo = require('../../../package.json')
 
 export interface ReseedStartOption {
     dryRun: boolean
@@ -23,7 +24,8 @@ export interface ReseedStartOption {
     closeAppAfterRun: boolean
 }
 
-class RateLimitError extends Error {}
+class RateLimitError extends Error {
+}
 
 export default class Reseed {
     // 传入参数
@@ -42,6 +44,14 @@ export default class Reseed {
         }
     };
 
+    private state: {
+        hashCount: number,
+        reseedCount: number,
+        reseedSuccess: number,
+        reseedFail: number,
+        reseedPass: number
+    }
+
     constructor(sites: EnableSite[], clientsConfig: TorrentClientConfig[], options: Partial<ReseedStartOption>) {
         this.sites = sites
         this.clients = clientsConfig
@@ -51,7 +61,13 @@ export default class Reseed {
 
         this.siteIds = sites.map(s => s.id)
         this.rateLimitSites = {}
-
+        this.state = {
+            hashCount: 0,
+            reseedCount: 0,
+            reseedSuccess: 0,
+            reseedFail: 0,
+            reseedPass: 0
+        }
     }
 
     private missionStart() {
@@ -63,18 +79,43 @@ export default class Reseed {
         })
     }
 
-    private missionEnd() {
+    private async missionEnd() {
         this.logger(`辅种任务已完成，任务Id： ${this.logId}`)
         MissionStore.updateCurrentMissionState({
             processing: false,
             logId: this.logId
         })
 
-        // TODO 发送微信通知
+        // 发送微信通知
+        if (this.options.weChatNotify) {
+            await this.sendWeChatNotify()
+        }
 
+        // 自动退出
         if (this.options.closeAppAfterRun) {
             ipcRenderer.send('close-me')
         }
+    }
+
+    private formatTpl(tpl: string): string {
+        return tpl
+            .replace(new RegExp('{version}','g'), packageInfo.version)
+            .replace(new RegExp('{mission_id}','g'), this.logId)
+            .replace(new RegExp('{clients_count}','g'), String(this.clients.length))
+            .replace(new RegExp('{sites_count}','g'), String(this.sites.length))
+            .replace(new RegExp('{hashs_count}','g'), String(this.state.hashCount))
+            .replace(new RegExp('{reseed_count}','g'), String(this.state.reseedCount))
+            .replace(new RegExp('{reseed_success}','g'), String(this.state.reseedSuccess))
+            .replace(new RegExp('{reseed_fail}','g'), String(this.state.reseedFail))
+            .replace(new RegExp('{reseed_pass}','g'), String(this.state.reseedPass))
+            .replace(new RegExp('{full_log}','g'), formatLogs(MissionStore.logByLogId(this.logId)))
+    }
+
+    private async sendWeChatNotify() {
+        let title = this.formatTpl(IYUUStore.weChatNotify.reseed.title).slice(0, 100)
+        let descr = this.formatTpl(IYUUStore.weChatNotify.reseed.descr)
+
+        await iyuuEndpoint.sendWeChatMsg(title, descr)
     }
 
     async start(): Promise<void> {
@@ -100,7 +141,7 @@ export default class Reseed {
 
         }
 
-        this.missionEnd()
+        await this.missionEnd()
     }
 
     private logger(msg: string) {
@@ -119,6 +160,7 @@ export default class Reseed {
             const torrents = await client.getTorrentsBy({
                 complete: true
             })
+            this.state.hashCount += torrents.length
 
             // 从缓存中获取该下载器已经转发过的infoHash
             const reseedTorrentInfoHashs = MissionStore.reseededByClientId(client.config.uuid)
@@ -139,6 +181,7 @@ export default class Reseed {
                 // 将分片信息请求IYUU服务器
                 const resp = await iyuuEndpoint.apiHash(chunkUnReseedTorrent.map(t => t.infoHash))
                 this.logger(`在提交的 ${chunkUnReseedTorrent.length} 个infoHash值里， IYUU服务器共返回 ${resp.data.length || 0} 个可辅种结果。`)
+                this.state.reseedCount += resp.data.length || 0
                 for (let j = 0; j < resp.data.length; j++) {
                     const reseedTorrentsDataFromIYUU = resp.data[j]
                     const reseedTorrentDataFromClient = torrents.find(t => t.infoHash === reseedTorrentsDataFromIYUU.hash)
@@ -150,6 +193,7 @@ export default class Reseed {
                     })
 
                     this.logger(`种子 ${reseedTorrentsDataFromIYUU.hash}： IYUU 返回 ${reseedTorrentsDataFromIYUU.torrent.length} 个待选种子，其中可添加 ${canReseedTorrents.length} 个`)
+                    this.state.reseedPass += reseedTorrentsDataFromIYUU.torrent.length - canReseedTorrents.length
 
                     let partialFail = 0;  // 部分辅种 infohash 出现错误，此时不应添加原种子缓存
                     for (let k = 0; k < canReseedTorrents.length; k++) {
@@ -195,9 +239,11 @@ export default class Reseed {
                                         MissionStore.appendReseeded({  // 将这个infoHash加入缓存中
                                             clientId: client.config.uuid, infoHash: reseedTorrent.info_hash
                                         })
+                                        this.state.reseedSuccess++
                                         break;  // 退出重试循环
                                     } else {
                                         partialFail++;
+                                        this.state.reseedFail++
                                         this.logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 失败。`)
                                         if (retryCount === IYUUStore.maxRetry) {
                                             this.logger(`请考虑为下载器 ${client.config.name}(${client.config.type}) 手动下载添加，链接 ${torrentLink} 。`)
@@ -217,6 +263,7 @@ export default class Reseed {
                                 }
 
                                 if (!(e instanceof TorrentNotExistError)) {
+                                    this.state.reseedFail++
                                     partialFail++;
                                 }
                             }

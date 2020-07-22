@@ -1,7 +1,7 @@
 // @ts-ignore
 import _ from 'lodash'
 import {Notification} from 'element-ui'
-import {Module, VuexModule, Mutation, Action, MutationAction} from 'vuex-module-decorators'
+import {Module, VuexModule, Mutation, MutationAction} from 'vuex-module-decorators'
 
 import {Site, EnableSite} from "@/interfaces/IYUU/Site";
 import {MissionStore} from '@/store/store-accessor' // circular import; OK though
@@ -24,8 +24,27 @@ export default class IYUU extends VuexModule {
 
     weChatNotify = {
         reseed: {
+            title: 'IYUU GUI自动辅种-统计报表',
+            descr: `### GUI 版本号: {version} 
+** 任务id: {mission_id}**
+** 下载服务器： {clients_count} 个** [本次任务配置启用的下载器数量]
+** 辅种站点:   {sites_count} 个** [本次任务配置启用的辅种站点数量]
+** 总做种: {hashs_count} 个**  [客户端做种的hash总数]
+** 返回数据: {reseed_count} 个** [服务器返回的可辅种数据]
+** 成功: {reseed_success} 个** [会把hash加入辅种缓存]
+** 失败: {reseed_fail} 个** [种子下载失败或网络超时等原因引起]
+** 跳过: {reseed_pass} 个** [因为下载器辅种缓存等原因跳过]
+
+------
+
+### 详细日志
+
+{full_log}
+`
+        },
+        transfer: {
             title: '',
-            desc: ''
+            descr: ''
         }
     }
 
@@ -198,5 +217,20 @@ export default class IYUU extends VuexModule {
         this.token = config.token
         this.enable_sites = config.sites
         this.enable_clients = config.clients
+        this.apiPreInfoHash = config.apiPreInfoHash
+        this.maxRetry = config.maxRetry
+        this.weChatNotify = config.weChatNotify
+    }
+
+    @Mutation
+    updateWechatNotify(config: {
+        part: 'reseed' | 'transfer',
+        title: string,
+        descr: string
+    }) {
+        this.weChatNotify[config.part] = {
+            title: config.title,
+            descr: config.descr
+        }
     }
 }

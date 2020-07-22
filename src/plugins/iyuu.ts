@@ -44,7 +44,7 @@ class IyuuEndpoint {
     }
 
     async sendWeChatMsg(text: string, desp: string|null = null): Promise<AxiosResponse> {
-        const params = new URLSearchParams();
+        const params = new FormData();
         params.append('text', text);
         if (desp) {
             params.append('desp', desp);

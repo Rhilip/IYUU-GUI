@@ -12,7 +12,7 @@
                     <template slot="label">
                         <i class="el-icon-message-solid" /> 微信推送模板
                     </template>
-                    // TODO 微信推送模板
+                    <weChat />
                 </el-tab-pane>
                 <el-tab-pane label="其他" name="other">
                     <el-row>
@@ -48,11 +48,12 @@
 </template>
 
 <script>
-import Normal from "../../components/Setting/Other/Normal";
 import {remote} from 'electron'
+import Normal from "../../components/Setting/Other/Normal";
+import WeChat from "../../components/Setting/Other/weChat";
 export default {
   name: 'Other',
-  components: {Normal},
+  components: {WeChat, Normal},
   data() {
     return {
       activeTabName: 'normal'

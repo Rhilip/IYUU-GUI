@@ -216,6 +216,12 @@ export default {
           note: 'Convert JSON to PHP native Array.',
           link: 'https://github.com/oknoorap/jsonar'
         },
+        {
+          name: 'FileSaver.js',
+          version: '2.0.2',
+          note: 'An HTML5 saveAs() FileSaver implementation',
+          link: 'https://github.com/eligrey/FileSaver.js'
+        },
 
         // ▲▲▲▲其他项目（直接相关的）请添加到此处以上▲▲▲▲
         {
