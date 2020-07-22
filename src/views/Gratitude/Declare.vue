@@ -145,7 +145,8 @@ export default {
 
         // 测试阶段成员
         testers: [
-          'Throne', '路在脚下', '樊夫', 'ice羽毛', '再见', 'al6', 'delete', '诗书琴画'
+          'Throne', '路在脚下', '樊夫', 'ice羽毛', '再见', 'al6', 'delete', '诗书琴画',
+          '承世', '甘蔗地里犯了错', 'oO子非鱼oO'
         ]
       },
 

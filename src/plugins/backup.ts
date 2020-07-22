@@ -116,6 +116,11 @@ export class IYUUAutoReseedBridge {
                     link += (link.lastIndexOf('?') > -1 ? '&' : '?' ) + siteConfigFromPHP.url_join.join('&')
                 }
 
+                if (siteConfigFromPHP.limitRule) {
+                    mergedSiteConfig.rate_limit.maxRequests = siteConfigFromPHP.limitRule.count || 0
+                    mergedSiteConfig.rate_limit.requestsDelay = siteConfigFromPHP.limitRule.sleep || 0
+                }
+
                 if (!link.match(/({[^}]+?})/ig) && link.search('{}') > -1) {
                     mergedSiteConfig.link = link
                     IYUUStore.addEnableSite(mergedSiteConfig)
