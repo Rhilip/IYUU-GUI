@@ -1,24 +1,28 @@
-# iyuu
+![](public/assets/iyuu_gui.png)
 
-## Project setup
-```
-yarn install
-```
+# IYUU GUI
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+这是一个基于IYUU提供的API，产生的一个可视化操作项目。
+目的是为了降低直接上手PHP版IYUUAutoReseed的难度。
 
-### Compiles and minifies for production
-```
-yarn build
-```
+## 各级页面预览
 
-### Lints and fixes files
-```
-yarn lint
-```
+- 登录页
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+![](resource/login.png)
+
+- 首页
+
+![](resource/home.png)
+
+- 任务启动页
+
+![](resource/mission.png)
+
+## 任务计划
+
+- [ ] 完善 `IYUU GUI` 的文档
+- [ ] 支持转种任务的建立
+- [ ] 支持其他类型的下载客户端
+
+

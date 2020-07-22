@@ -1,7 +1,7 @@
 <template>
     <el-container>
-        <el-header height="260">
-            <img src="/assets/iyuu.png" alt="IYUU">
+        <el-header height="300">
+            <img src="/assets/iyuu_gui.png" alt="IYUU">
         </el-header>
         <el-main>
             <el-row class="row-bg" justify="space-around" type="flex">
