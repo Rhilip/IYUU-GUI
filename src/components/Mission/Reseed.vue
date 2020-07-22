@@ -45,8 +45,12 @@
                             v-model="form.options.closeAppAfterRun"
                             active-color="#13ce66"
                             :disabled="disableAppCloseAfterRun"
-                            active-text="任务运行完成自动退出软件" />
+                            active-text="任务运行完成后 自动退出软件" />
                     <br>
+                    <el-switch
+                            v-model="form.options.weChatNotify"
+                            active-color="#13ce66"
+                            active-text="任务运行完成后 微信通知运行日志" />
                 </el-form-item>
             </el-form>
         </div>
@@ -87,7 +91,8 @@
           sites: [],
           options: {
             dryRun: false,
-            closeAppAfterRun: false
+            closeAppAfterRun: false,
+            weChatNotify: true,
           }
         },
 
@@ -148,7 +153,8 @@
           clients: this.all.clients,
           options: {
             dryRun: false,
-            closeAppAfterRun: false
+            closeAppAfterRun: false,
+            weChatNotify: true
           }
         }
       },

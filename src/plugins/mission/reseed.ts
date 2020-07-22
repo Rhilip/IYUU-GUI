@@ -10,7 +10,7 @@ import downloadFactory from '@/plugins/sites/factory';
 
 import iyuuEndpoint from "@/plugins/iyuu";
 
-import {MissionStore, IYUUStore, StatueStore} from '@/store/store-accessor' // circular import; OK though
+import {MissionStore, IYUUStore, StatusStore} from '@/store/store-accessor' // circular import; OK though
 import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 import {sleep} from "@/plugins/common";
 import dayjs from "dayjs";
@@ -55,7 +55,7 @@ export default class Reseed {
     }
 
     private missionStart() {
-        StatueStore.missionStart()
+        StatusStore.missionStart()
 
         MissionStore.updateCurrentMissionState({
             processing: true,
@@ -191,7 +191,7 @@ export default class Reseed {
                                     const addTorrentStatue = await client.addTorrent(torrentLink, downloadOptionsForThisTorrent)
                                     if (addTorrentStatue) {
                                         this.logger(`添加站点 ${siteInfoForThisTorrent.site} 种子 ${reseedTorrent.info_hash} 成功。`)
-                                        StatueStore.torrentReseed()  // 增加辅种成功计数
+                                        StatusStore.torrentReseed()  // 增加辅种成功计数
                                         MissionStore.appendReseeded({  // 将这个infoHash加入缓存中
                                             clientId: client.config.uuid, infoHash: reseedTorrent.info_hash
                                         })

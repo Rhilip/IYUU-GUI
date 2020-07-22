@@ -22,6 +22,13 @@ export default class IYUU extends VuexModule {
     apiPreInfoHash: number = 2000 // 单次请求最大infohash数
     maxRetry: number = 2 // 下载推送尝试次数
 
+    weChatNotify = {
+        reseed: {
+            title: '',
+            desc: ''
+        }
+    }
+
     // 这个方法不用state，因为state会被持久化，而这个后续可能会增加站点
     get coSites() {
         return [
@@ -175,5 +182,21 @@ export default class IYUU extends VuexModule {
     }) {
         this.apiPreInfoHash = config.apiPreInfoHash
         this.maxRetry = config.maxRetry
+    }
+
+    @Mutation
+    restoreFromConfig(config: {
+        token: string
+        sites: EnableSite[]
+        clients: TorrentClientConfig[]
+
+        apiPreInfoHash: number
+        maxRetry: number
+
+        weChatNotify: any
+    }) {
+        this.token = config.token
+        this.enable_sites = config.sites
+        this.enable_clients = config.clients
     }
 }

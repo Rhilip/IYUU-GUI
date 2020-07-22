@@ -1,10 +1,23 @@
+import _ from 'lodash'
+import UUID from 'uuid'
 // @ts-ignore 这个库暂时还没有Typescript支持
 import jsonar from 'jsonar'
-import {IYUUStore} from "@/store";
-import UUID from 'uuid'
-import _ from 'lodash'
-import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
+import FileSaver from 'file-saver'
+
 import {EnableSite} from "@/interfaces/IYUU/Site";
+import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
+import {IYUUStore, MissionStore, StatusStore} from "@/store";
+
+const packageInfo = require('../../package.json')
+
+// 从JSON字段中解析，解析失败返回空对象
+function decodeFromJsonString(text: string) {
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        return {}
+    }
+}
 
 export class IYUUAutoReseedBridge {
     // 入口方法，内部根据字符串信息判断是使用jsonar库解析PHP Array还是JSON解析
@@ -19,7 +32,7 @@ export class IYUUAutoReseedBridge {
                 if (content.indexOf('<?php') > -1) {
                     parsedConfig = this.decodeFromPHPArrayString(content)
                 } else {
-                    parsedConfig = this.decodeFromJsonString(content)
+                    parsedConfig = decodeFromJsonString(content)
                 }
 
                 if (parsedConfig['iyuu.cn'] === IYUUStore.token) {
@@ -38,15 +51,6 @@ export class IYUUAutoReseedBridge {
         const toParsePhpConfig = phpConfigRaw.slice(returnFlag + 6);   // return及之前全部忽略
         try {
             return jsonar.parse(toParsePhpConfig);
-        } catch (e) {
-            return {}
-        }
-    }
-
-    // 从JSON字段中解析，解析失败返回空对象
-    private static decodeFromJsonString(text: string) {
-        try {
-            return JSON.parse(text);
         } catch (e) {
             return {}
         }
@@ -121,5 +125,72 @@ export class IYUUAutoReseedBridge {
         }
 
         return {client: clientCount, site: siteCount}
+    }
+}
+
+export class ConfigFileBridge {
+    public static decodeFromFile(file:File) {
+        return new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = (e) => {
+                // @ts-ignore
+                const content: string = e.target.result
+
+                let parsedConfig = decodeFromJsonString(content);
+
+                if (parsedConfig['token'] === IYUUStore.token) {
+                    resolve(parsedConfig)
+                } else {
+                    reject('配置项未通过检验，或你传入文件中的爱语飞飞令牌与当前登录的不符。')
+                }
+            }
+            r.readAsText(file);
+        })
+    }
+
+    public static importFromJSON(config: any) {
+        IYUUStore.restoreFromConfig({
+            token: config.token,
+            sites: config.sites,
+            clients: config.clients,
+            apiPreInfoHash: config.config.apiPreInfoHash,
+            maxRetry: config.config.maxRetry,
+            weChatNotify: config.config.weChatNotify
+        })
+        StatusStore.restoreFromConfig({
+            reseedTorrentCount: config.state.reseedTorrentCount,
+            startAppCount: config.state.startAppCount,
+            startMissionCount: config.state.startMissionCount,
+        })
+        MissionStore.restoreFromConfig({
+            reseeded: config.hashes.reseeded
+        })
+    }
+
+    public static exportToJSON() {
+        const exportJSON =  {
+            version: packageInfo.version,
+            token: IYUUStore.token,
+            sites: IYUUStore.enable_sites,
+            clients: IYUUStore.enable_clients,
+            state: {
+                startAppCount: StatusStore.startAppCount,
+                startMissionCount: StatusStore.startMissionCount,
+                reseedTorrentCount: StatusStore.reseedTorrentCount
+            },
+            hashes: {
+                reseeded: MissionStore.reseeded
+            },
+            config: {
+                apiPreInfoHash: IYUUStore.apiPreInfoHash,
+                maxRetry: IYUUStore.maxRetry,
+                weChatNotify: IYUUStore.weChatNotify
+            }
+        }
+
+        const blob = new Blob([JSON.stringify(exportJSON)], {
+            type: "text/plain;charset=utf-8"
+        })
+        FileSaver.saveAs(blob, "iyuu_config.json");
     }
 }

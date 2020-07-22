@@ -35,4 +35,15 @@ export default class Status extends VuexModule {
     async cleanTorrentReseed() {
         return {reseedTorrentCount: 0}
     }
+
+    @Mutation
+    restoreFromConfig(config: {
+        startAppCount: number
+        startMissionCount: number
+        reseedTorrentCount: number
+    }) {
+        this.startAppCount = config.startAppCount
+        this.startMissionCount = config.startMissionCount
+        this.reseedTorrentCount = config.reseedTorrentCount
+    }
 }

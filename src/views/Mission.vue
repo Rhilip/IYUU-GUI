@@ -17,6 +17,7 @@
                         为添加的下载器和站点进行批量辅种任务，你可以在点击后的设任务置对话框里进一步设置启用站点和下载服务器。
                     </el-col>
                 </el-row>
+                <!--
                 <el-row style="margin-top: 10px">
                     <el-col :span="4">
                         <el-button type="warning"
@@ -29,6 +30,7 @@
                         // 还没开始写
                     </el-col>
                 </el-row>
+                -->
             </div>
         </el-card>
         <el-card class="main-card">
@@ -44,7 +46,7 @@
             </div>
             <div>
                 <el-scrollbar>
-                    <div style="height: 285px">
+                    <div style="height: 350px">
                         <pre v-if="logId !== ''">{{ formatLogs(logs) }}</pre>
                     </div>
                 </el-scrollbar>

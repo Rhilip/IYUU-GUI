@@ -67,4 +67,11 @@ export default class Mission extends VuexModule {
     async cleanReseeded() {
         return {reseeded: []}
     }
+
+    @Mutation
+    restoreFromConfig(config: {
+        reseeded: any
+    }) {
+        this.reseeded = config.reseeded
+    }
 }

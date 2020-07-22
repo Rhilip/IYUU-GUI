@@ -15,13 +15,13 @@ import StatusModule from "@/store/modules/Status";
 // (result from getModule(...))
 export let IYUUStore: IYUUModule
 export let MissionStore: MissionModule
-export let StatueStore: StatusModule
+export let StatusStore: StatusModule
 
 // initializer plugin: sets up state/getters/mutations/actions for each store
 export function initializeStores(store: Store<any>): void {
     IYUUStore = getModule(IYUUModule, store)
     MissionStore = getModule(MissionModule, store)
-    StatueStore = getModule(StatusModule, store)
+    StatusStore = getModule(StatusModule, store)
 }
 
 // for use in 'modules' store init (see store/index.ts), so each module
