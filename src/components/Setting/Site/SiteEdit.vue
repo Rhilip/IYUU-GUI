@@ -14,7 +14,7 @@
                               :placeholder="disable_link ? '该站点不支持构造种子下载链接' : ''" />
                 </el-form-item>
                 <el-form-item label="站点 Cookies" prop="cookies">
-                    <el-input v-model="form.cookies" :autosize="{ minRows: 2}" type="textarea" />
+                    <el-input v-model="form.cookies" :autosize="{ minRows: 2 }" type="textarea" />
                 </el-form-item>
                 <el-form-item label="高级设置" prop="rate_limit">
                     下载器推送方式：<el-switch
@@ -89,7 +89,7 @@ export default {
                 } else if (value.search('{}') === -1) {
                   callback(new Error('链接中没有可被替换的 {}， 请至少保留一个'))
                 }
-              } else if (this.site_add_form.cookies === '') {
+              } else if (this.form.cookies === '') {
                 callback(new Error('你必须填入链接或者Cookies中的一个'))
               }
               callback()
