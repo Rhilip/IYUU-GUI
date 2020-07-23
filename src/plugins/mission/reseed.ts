@@ -296,37 +296,39 @@ export default class Reseed {
 
     private async siteRateLimitCheck(site: EnableSite) {
         const siteRateLimitRule = site.rate_limit
-        // 建立字典
-        if (!(site.site in this.rateLimitSites)) {
-            this.rateLimitSites[site.site] = {
-                last_hit_timestamp: 0,
-                total_count: 0
-            }
-        }
-
-        // 检查该站点是否达到最大下载
-        if (siteRateLimitRule.maxRequests > 0) {
-            if (this.rateLimitSites[site.site].total_count > siteRateLimitRule.maxRequests) {
-                this.tempRemoveSite(site, `触及到推送限制规则： 单次运行最多推送 ${siteRateLimitRule.maxRequests} 个种子`)
-                throw new RateLimitError(`站点 ${site.site} 触及到推送限制规则`)
-            } else {
-                this.rateLimitSites[site.site].total_count++
-            }
-        }
-
-        if (siteRateLimitRule.requestsDelay > 0) {
-            const waitTime = siteRateLimitRule.requestsDelay * 1e3
-            const dateNow = Date.now()
-            // 计算剩余等待时间，并等待
-            const elapseTime = dateNow - (waitTime + this.rateLimitSites[site.site].last_hit_timestamp)
-            if (elapseTime > 0) {
-                this.logger(`站点 ${site.site} 通过推送间隔检查，上次推送时间 ${dayjs(this.rateLimitSites[site.site].last_hit_timestamp).format('YYYY-MM-DD HH:mm:ss')}，间隔 ${elapseTime / 1e3} 秒。`)
-            } else {
-                this.logger(`站点 ${site.site} 触及到推送限制规则： 连续两次推送间隔 ${siteRateLimitRule.requestsDelay} 秒。等待 ${-elapseTime / 1e3}秒后重试。`)
-                await sleep(-elapseTime)
+        if (siteRateLimitRule) {
+            // 建立字典
+            if (!(site.site in this.rateLimitSites)) {
+                this.rateLimitSites[site.site] = {
+                    last_hit_timestamp: 0,
+                    total_count: 0
+                }
             }
 
-            this.rateLimitSites[site.site].last_hit_timestamp = Date.now()
+            // 检查该站点是否达到最大下载
+            if (siteRateLimitRule.maxRequests > 0) {
+                if (this.rateLimitSites[site.site].total_count > siteRateLimitRule.maxRequests) {
+                    this.tempRemoveSite(site, `触及到推送限制规则： 单次运行最多推送 ${siteRateLimitRule.maxRequests} 个种子`)
+                    throw new RateLimitError(`站点 ${site.site} 触及到推送限制规则`)
+                } else {
+                    this.rateLimitSites[site.site].total_count++
+                }
+            }
+
+            if (siteRateLimitRule.requestsDelay > 0) {
+                const waitTime = siteRateLimitRule.requestsDelay * 1e3
+                const dateNow = Date.now()
+                // 计算剩余等待时间，并等待
+                const elapseTime = dateNow - (waitTime + this.rateLimitSites[site.site].last_hit_timestamp)
+                if (elapseTime > 0) {
+                    this.logger(`站点 ${site.site} 通过推送间隔检查，上次推送时间 ${dayjs(this.rateLimitSites[site.site].last_hit_timestamp).format('YYYY-MM-DD HH:mm:ss')}，间隔 ${elapseTime / 1e3} 秒。`)
+                } else {
+                    this.logger(`站点 ${site.site} 触及到推送限制规则： 连续两次推送间隔 ${siteRateLimitRule.requestsDelay} 秒。等待 ${-elapseTime / 1e3}秒后重试。`)
+                    await sleep(-elapseTime)
+                }
+
+                this.rateLimitSites[site.site].last_hit_timestamp = Date.now()
+            }
         }
     }
 }
