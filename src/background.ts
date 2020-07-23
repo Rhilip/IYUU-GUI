@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, Tray, Menu, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import { autoUpdater } from "electron-updater"
 import * as path from "path";
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const packageInfo = require('../package.json')
@@ -62,6 +63,7 @@ function createWindow() {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
+    autoUpdater.checkForUpdatesAndNotify()
   }
 
   initTray()

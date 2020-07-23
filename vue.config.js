@@ -12,6 +12,7 @@ module.exports = {
         "nsis": {
           "deleteAppDataOnUninstall": true
         },
+        publish: ['github']
       },
 
       // refs: https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/683
