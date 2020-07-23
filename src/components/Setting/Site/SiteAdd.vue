@@ -158,12 +158,14 @@ export default {
       this.$refs.site_add_form.validate((valid) => {
         if (valid) {
           let site_extra = {
-            download_torrent: false
+            download_torrent: false,
+            rate_limit: {maxRequests: 0, requestsDelay: 0}
           }
 
           if (this.$store.getters['IYUU/isForceDownloadSite'](this.site_add_form.site)) {
             site_extra.download_torrent = true
           }
+          site_extra.rate_limit = this.$store.getters['IYUU/defaultSiteRateLimit'](this.site_add_form.site)
 
           this.$store.commit('IYUU/addEnableSite',
             _.merge(

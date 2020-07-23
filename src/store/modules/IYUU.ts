@@ -55,14 +55,35 @@ export default class IYUU extends VuexModule {
         ]
     }
 
-    // FIXME
     get forceDownloadSite() {
         return [
             'hdchina', 'hdcity'
         ]
     }
 
-    // 理由同上
+    get defaultSiteRateLimit(): (site: string) => { maxRequests: number, requestsDelay: number } {
+        return (site: string) => {
+            switch (site) {
+                case 'ourbits':
+                case 'moecat':
+                case 'ssd':
+                    return {maxRequests: 20, requestsDelay: 15}
+                case 'hddolby':
+                case 'hdhome':
+                case 'pthome':
+                    return {maxRequests: 20, requestsDelay: 5}
+                case 'hdsky':
+                    return {maxRequests: 50, requestsDelay: 15}
+                case 'hdchina':
+                    return {maxRequests: 10, requestsDelay: 5}
+                case 'pt':
+                    return {maxRequests: 20, requestsDelay: 20}
+                default:
+                    return {maxRequests: 0, requestsDelay: 0}
+            }
+        }
+    }
+
     get supportClientType() {
         return {
             'qbittorrent': defaultQbittorrentConfig,
