@@ -3,6 +3,7 @@
             :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
             :title="`编辑下载服务器 - ${form.type}`"
+            :close-on-click-modal="false"
             top="8vh"
             width="60%"
             @close="handleDialogClose">

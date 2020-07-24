@@ -2,6 +2,7 @@
     <el-dialog
             :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
+            :close-on-click-modal="false"
             title="添加新下载服务器"
             top="8vh"
             width="60%"

@@ -2,7 +2,7 @@
     <el-dialog
             :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
-
+            :close-on-click-modal="false"
             title="添加新站点"
             width="60%"
             top="8vh"

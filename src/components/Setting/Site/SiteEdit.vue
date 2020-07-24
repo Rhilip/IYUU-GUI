@@ -3,6 +3,7 @@
             :before-close="handleDialogBeforeClose"
             :visible.sync="visible"
             :title="`编辑站点 - ${form.site}`"
+            :close-on-click-modal="false"
             width="60%"
             top="8vh"
             @close="handleDialogClose">
