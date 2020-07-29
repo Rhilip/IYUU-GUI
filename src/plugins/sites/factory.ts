@@ -14,7 +14,7 @@ export const coSite = [
 ]
 
 export const forceDownloadSite = [
-    'hdchina', 'hdcity'
+    'hdchina', 'hdcity', 'hdsky'
 ]
 
 export function isForceDownloadSite(name: string) {
