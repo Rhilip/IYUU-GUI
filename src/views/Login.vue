@@ -17,7 +17,7 @@
                             <div v-show="need_co_site">
                                 <el-form-item label="合作站点" prop="site">
                                     <el-select v-model="form.site" placeholder="请选择">
-                                        <el-option v-for="item in $store.getters['IYUU/coSites']"
+                                        <el-option v-for="item in co_site"
                                                    :key="item"
                                                    :label="item"
                                                    :value="item" />
@@ -61,8 +61,9 @@
 </template>
 
 <script>
-    import {shellOpen} from "../plugins/common";
-    import IYUU from '../plugins/iyuu'
+  import {shellOpen} from "../plugins/common";
+  import IYUU from '../plugins/iyuu';
+  import {coSite} from "../plugins/sites/factory";
 
   export default {
     name: 'Login',
@@ -71,7 +72,7 @@
         shellOpen: shellOpen,
         need_co_site: false, // 是否需要展示合作站点认证
         should_read_disclaimer: true, // 是否需要在表单提交的时候，展示免责声明
-        co_site: ['ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'],
+        co_site: coSite,
         form: {
           token: '',
           site: '',

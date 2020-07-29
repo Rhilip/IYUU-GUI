@@ -67,7 +67,7 @@
 
 <script>
   import _ from 'lodash'
-  import factory from "../../../plugins/btclient/factory";
+  import factory, {supportClientType} from "../../../plugins/btclient/factory";
 
   export default {
     name: "ClientAdd",
@@ -84,7 +84,7 @@
         visible: false,
         disable_form: true,
         disable_save_btn: false,
-        clients: {},
+        clients: supportClientType,
         form: {},
         marks: {
           5e3: '5 秒',
@@ -105,10 +105,6 @@
         this.visible = newValue
         this.cleanForm()
       }
-    },
-
-    created() {
-      this.clients = this.$store.getters['IYUU/supportClientType']
     },
 
     methods: {

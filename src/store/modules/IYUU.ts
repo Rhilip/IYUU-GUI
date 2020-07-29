@@ -4,12 +4,8 @@ import {Notification} from 'element-ui'
 import {Module, VuexModule, Mutation, MutationAction} from 'vuex-module-decorators'
 
 import {Site, EnableSite} from "@/interfaces/IYUU/Site";
-import {MissionStore} from '@/store/store-accessor' // circular import; OK though
-
 import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
-import {defaultQbittorrentConfig} from "@/plugins/btclient/qbittorrent";
-import {defaultTransmissionConfig} from "@/plugins/btclient/transmission";
-import {defaultDelugeConfig} from "@/plugins/btclient/deluge";
+import {MissionStore} from '@/store/store-accessor' // circular import; OK though
 
 @Module({namespaced: true, name: 'IYUU'})
 export default class IYUU extends VuexModule {
@@ -45,56 +41,6 @@ export default class IYUU extends VuexModule {
         transfer: {
             title: '',
             descr: ''
-        }
-    }
-
-    // 这个方法不用state，因为state会被持久化，而这个后续可能会增加站点
-    get coSites() {
-        return [
-            'ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'
-        ]
-    }
-
-    get forceDownloadSite() {
-        return [
-            'hdchina', 'hdcity'
-        ]
-    }
-
-    get defaultSiteRateLimit(): (site: string) => { maxRequests: number, requestsDelay: number } {
-        return (site: string) => {
-            switch (site) {
-                case 'ourbits':
-                case 'moecat':
-                case 'ssd':
-                    return {maxRequests: 20, requestsDelay: 15}
-                case 'hddolby':
-                case 'hdhome':
-                case 'pthome':
-                    return {maxRequests: 20, requestsDelay: 5}
-                case 'hdsky':
-                    return {maxRequests: 20, requestsDelay: 20}
-                case 'hdchina':
-                    return {maxRequests: 10, requestsDelay: 5}
-                case 'pt':
-                    return {maxRequests: 20, requestsDelay: 20}
-                default:
-                    return {maxRequests: 0, requestsDelay: 0}
-            }
-        }
-    }
-
-    get supportClientType() {
-        return {
-            'qbittorrent': defaultQbittorrentConfig,
-            'transmission': defaultTransmissionConfig,
-            'deluge': defaultDelugeConfig
-        }
-    }
-
-    get isForceDownloadSite(): (siteName: string) => boolean {
-        return (siteName: string) => {
-            return this.forceDownloadSite.includes(siteName)
         }
     }
 

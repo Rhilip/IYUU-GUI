@@ -7,6 +7,7 @@ import FileSaver from 'file-saver'
 import {EnableSite} from "@/interfaces/IYUU/Site";
 import {TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
 import {IYUUStore, MissionStore, StatusStore} from "@/store";
+import {isForceDownloadSite} from "@/plugins/sites/factory";
 
 const packageInfo = require('../../package.json')
 
@@ -99,7 +100,7 @@ export class IYUUAutoReseedBridge {
                 }
 
                 mergedSiteConfig.cookies = siteConfigFromPHP.cookies
-                mergedSiteConfig.download_torrent = IYUUStore.isForceDownloadSite(site.site)
+                mergedSiteConfig.download_torrent = isForceDownloadSite(site.site)
                 let link = IYUUStore.siteDownloadLinkTpl(site.site)
                 if (siteConfigFromPHP.passkey) {
                     link = link.replace(/{passkey}/ig, siteConfigFromPHP.passkey)

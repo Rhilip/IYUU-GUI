@@ -1,7 +1,13 @@
 import {TorrentClient, TorrentClientConfig} from "@/interfaces/BtClient/AbstractClient";
-import Qbittorrent from "@/plugins/btclient/qbittorrent";
-import Transmission from "@/plugins/btclient/transmission";
-import Deluge from "@/plugins/btclient/deluge";
+import Qbittorrent, {defaultQbittorrentConfig} from "@/plugins/btclient/qbittorrent";
+import Transmission, {defaultTransmissionConfig} from "@/plugins/btclient/transmission";
+import Deluge, {defaultDelugeConfig} from "@/plugins/btclient/deluge";
+
+export const supportClientType = {
+    'qbittorrent': defaultQbittorrentConfig,
+    'transmission': defaultTransmissionConfig,
+    'deluge': defaultDelugeConfig
+}
 
 export default function (config: TorrentClientConfig): TorrentClient {
     switch (config.type) {

@@ -52,6 +52,7 @@
 <script>
 import _ from "lodash"
 import Cookies from "../../../plugins/cookies";
+import {isForceDownloadSite} from "../../../plugins/sites/factory";
 export default {
   name: 'SiteEdit',
   props: {
@@ -132,7 +133,7 @@ export default {
         }
       }, this.info);
 
-      this.disable_link = this.$store.getters['IYUU/isForceDownloadSite'](this.info.site)
+      this.disable_link = isForceDownloadSite(this.info.site)
     }
   },
 

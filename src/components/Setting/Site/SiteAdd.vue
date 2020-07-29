@@ -67,6 +67,7 @@
 <script>
 import _ from 'lodash'
 import Cookies from "../../../plugins/cookies";
+import {defaultSiteRateLimit, isForceDownloadSite} from "../../../plugins/sites/factory";
 export default {
   name: 'SiteAdd',
 
@@ -143,7 +144,7 @@ export default {
     },
 
     handleSiteAddSelectChange (site) {
-      if (this.$store.getters['IYUU/isForceDownloadSite'](site)) {
+      if (isForceDownloadSite(site)) {
         this.disable_link = true
         this.link_placeholder = '该站点无法构造种子下载链接，请填写Cookies项'
         this.site_add_form.link = ''
@@ -162,10 +163,10 @@ export default {
             rate_limit: {maxRequests: 0, requestsDelay: 0}
           }
 
-          if (this.$store.getters['IYUU/isForceDownloadSite'](this.site_add_form.site)) {
+          if (isForceDownloadSite(this.site_add_form.site)) {
             site_extra.download_torrent = true
           }
-          site_extra.rate_limit = this.$store.getters['IYUU/defaultSiteRateLimit'](this.site_add_form.site)
+          site_extra.rate_limit = defaultSiteRateLimit(this.site_add_form.site)
 
           this.$store.commit('IYUU/addEnableSite',
             _.merge(
