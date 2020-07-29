@@ -6,6 +6,7 @@ import {TorrentInfo} from "@/interfaces/IYUU/Forms";
 import defaultSiteDownload from '@/plugins/sites/default'
 import HdChinaDownload from '@/plugins/sites/hdchina'
 import HDCityDownload from '@/plugins/sites/hdcity'
+import HDSkyDownload from '@/plugins/sites/hdsky'
 
 // 合作站点
 export const coSite = [
@@ -48,6 +49,8 @@ export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
             return await HdChinaDownload(reseedInfo, site)
         case 'hdcity':
             return await HDCityDownload(reseedInfo, site)
+        case 'hdsky':
+            return await HDSkyDownload(reseedInfo, site)
         default:
             return await defaultSiteDownload(reseedInfo, site)
     }

@@ -1,4 +1,4 @@
-// hdchina站点下载链接构造逻辑
+// hdsky站点下载链接构造方法
 
 import axios from 'axios'
 import urljoin from "url-join";
@@ -32,11 +32,5 @@ export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
         throw new TorrentNotExistError(`没有该ID的种子 (站点 ${site.site} ID ${reseedInfo.sid})`)
     }
 
-    // 直接使用正则提取
-    let path = (detailsPage.match(/action="([^"]+?download\.php\?[^"]+?)"/) || ['', ''])[1]
-    if (path) {
-        return path.replace(/&amp;/ig,'&')  // 由于下载链接中直接带有域名，跳过
-    }
 
-    throw new Error(`未提取到该ID的种子链接 (站点 ${site.site} ID ${reseedInfo.sid})`)
 }
