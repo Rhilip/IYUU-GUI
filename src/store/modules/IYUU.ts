@@ -73,7 +73,7 @@ export default class IYUU extends VuexModule {
                 case 'pthome':
                     return {maxRequests: 20, requestsDelay: 5}
                 case 'hdsky':
-                    return {maxRequests: 50, requestsDelay: 15}
+                    return {maxRequests: 20, requestsDelay: 20}
                 case 'hdchina':
                     return {maxRequests: 10, requestsDelay: 5}
                 case 'pt':
