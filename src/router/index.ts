@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import { Notification } from 'element-ui'
 
-import store from '@/store'
+import {IYUUStore} from '@/store'
 
 Vue.use(VueRouter)
 
@@ -91,7 +91,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   // @ts-ignore
-  if (to.matched.some(record => record.meta.requiresLogin) && !store.state.IYUU.token) {
+  if (to.matched.some(record => record.meta.requiresLogin) && !IYUUStore.token) {
     Notification.error('未登录，返回登录窗口')
     next('/login')
   } else {

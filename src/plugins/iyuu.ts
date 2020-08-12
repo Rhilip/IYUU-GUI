@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import axios, {AxiosInstance, AxiosResponse} from 'axios'
 import {Notification} from 'element-ui'
 
-import store from '@/store'
+import {IYUUStore} from '@/store'
 import * as Forms from '@/interfaces/IYUU/Forms'
 
 
@@ -55,7 +55,7 @@ class IyuuEndpoint {
 
     getSign():string {
         // @ts-ignore
-        return store.state.IYUU.token
+        return IYUUStore.token
     }
 
     // 用户登录绑定操作
@@ -73,7 +73,7 @@ class IyuuEndpoint {
                         title: '登录验证成功',
                         message: data.data.errmsg
                     })
-                    store.dispatch('IYUU/setToken', userLoginForm.token).then(() => {
+                    IYUUStore.setToken(userLoginForm.token).then(() => {
                         resolve(data)
                     })
                 } else {
@@ -103,7 +103,7 @@ class IyuuEndpoint {
 
                 if (data.data.sites) {
                     Notification.success('从IYUU服务器获取站点数据成功')
-                    store.dispatch('IYUU/updateSites', data.data.sites).then(() => {
+                    IYUUStore.updateSites(data.data.sites).then(() => {
                         resolve(data)
                     })
                 } else {
