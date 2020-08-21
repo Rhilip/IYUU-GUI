@@ -21,7 +21,7 @@ function timestamp() {
 class IyuuEndpoint {
     private instance: AxiosInstance;
     private apiPoint = 'https://api.iyuu.cn/';
-    private version = '1.9.3'; // FAKE origin version
+    private version = '1.10.6'; // FAKE origin version
 
     constructor() {
         this.instance = axios.create({
