@@ -10,7 +10,7 @@ import HDSkyDownload from '@/plugins/sites/hdsky'
 
 // 合作站点
 export const coSite = [
-    'ourbits', 'hddolby', 'hdhome', 'pthome', 'moecat'
+    'ourbits', 'hddolby', 'hdhome', 'pthome', 'chdbits'
 ]
 
 export const forceDownloadSite = [
