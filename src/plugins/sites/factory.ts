@@ -42,7 +42,6 @@ export function defaultSiteRateLimit(name: string) {
     }
 }
 
-
 export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
     switch (site.site) {
         case 'hdchina':

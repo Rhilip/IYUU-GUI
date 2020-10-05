@@ -1,4 +1,4 @@
-// hdsky站点下载链接构造方法
+// HDSKY站点下载链接构造逻辑
 
 import axios from 'axios'
 import urljoin from "url-join";
@@ -22,15 +22,19 @@ export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
     if (detailsPage.search('该页面必须在登录后才能访问') > -1) {
         throw new CookiesExpiredError('站点 Cookies 已过期，请更新后重新辅种！')
     }
-    if (detailsPage.search('没有该ID的种子') > -1) {
-        await iyuuEndpoint.apiNotify({
-            site: site.site,
-            sid: site.id,
-            torrent_id: reseedInfo.sid,
-            error: '404'
-        })
-        throw new TorrentNotExistError(`没有该ID的种子 (站点 ${site.site} ID ${reseedInfo.sid})`)
+
+    // 直接使用正则提取
+    let path = (detailsPage.match(/action=['"]([^"]+?download\.php\?[^"]+?)['"]/) || ['', ''])[1]
+    if (path != '') {
+        return path.replace(/&amp;/ig,'&')  // 由于下载链接中直接带有域名，跳过
     }
 
-
+    // 未提取到，则当作该种子不存在，提交IYUU并抛出异常
+    await iyuuEndpoint.apiNotify({
+        site: site.site,
+        sid: site.id,
+        torrent_id: reseedInfo.sid,
+        error: '404'
+    })
+    throw new TorrentNotExistError(`没有该ID的种子 (站点 ${site.site} ID ${reseedInfo.sid})`)
 }
