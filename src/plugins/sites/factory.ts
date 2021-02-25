@@ -10,11 +10,13 @@ import HDSkyDownload from '@/plugins/sites/hdsky'
 
 // 合作站点
 export const coSite = [
-    'ourbits', 'hddolby', 'hdhome', 'pthome', 'chdbits'
+    'ourbits', 'hddolby', 'hdhome', 'pthome', 'chdbits', 'hdai'
 ]
 
 export const forceDownloadSite = [
-    'hdchina', 'hdcity', 'hdsky'
+    'hdchina', 'hdcity', 'hdsky',
+    // 使用 '&uid={uid}&hash={hash}' 的站点
+    'pthome', 'hdhome', 'hddolby', 'hdai'
 ]
 
 export function isForceDownloadSite(name: string) {
@@ -51,6 +53,13 @@ export default async function (reseedInfo: TorrentInfo, site: EnableSite) {
         case 'hdsky':
             return await HDSkyDownload(reseedInfo, site)
         default:
+            /**
+             * 由于我暂时无精力实现以下站点的传入uid和hash功能，
+             * 且这些站点在有cookies的情况下，不需要 '&uid={uid}&hash={hash}' 字符串
+             * 所以将这些站点移入 forceDownloadSite 且在传入链接中删去以上字段，
+             * 强行使用 /download.php?id={} + Cookies 的形式下载种子
+             */
+            site.download_page = site.download_page.replace('&uid={uid}&hash={hash}', '')
             return await defaultSiteDownload(reseedInfo, site)
     }
 }
