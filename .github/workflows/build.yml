@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
+      fail-fast: false
 
     env:
       ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
